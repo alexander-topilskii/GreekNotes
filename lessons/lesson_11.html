@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Греческий язык — Недвижимость, город, глаголы</title>
+  <title>Урок 11: Квартиры и город — Греческий язык</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* Strict 100vh viewport clamp - absolutely no window scroll */
+    /* Strict 100vh viewport clamp - zero window scroll */
     html, body {
       height: 100vh;
       height: 100dvh;
@@ -22,7 +22,7 @@
     :root {
       --app-font-size: 11px;
       --app-line-height: 1.25;
-      --row-py: 1px;
+      --row-py: 1.5px;
       --card-gap: 5px;
     }
 
@@ -32,7 +32,7 @@
       width: 100vw;
       overflow: hidden;
       display: flex;
-      justify-content: center;
+      justify-content: flex-start;
       align-items: flex-start;
       padding: 4px;
       box-sizing: border-box;
@@ -42,21 +42,20 @@
     /* The scalable canvas wrapper */
     #scale-stage {
       width: 100%;
-      height: 100%;
-      transform-origin: top center;
-      transition: transform 0.12s ease-out;
+      height: auto;
+      transform-origin: top left;
       display: flex;
       flex-direction: column;
     }
 
-    /* 5 balanced columns flex grid */
+    /* 5 balanced columns grid */
     .sheet-columns {
       display: grid;
       grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: 5px;
       width: 100%;
-      height: 100%;
-      align-items: stretch;
+      height: auto;
+      align-items: start;
     }
 
     .col-stack {
@@ -64,24 +63,25 @@
       flex-direction: column;
       gap: var(--card-gap);
       min-width: 0;
-      height: 100%;
+      height: auto;
     }
 
     .vocab-card {
       font-size: var(--app-font-size);
       background: #ffffff;
-      border: 1px solid #e2e8f0;
+      border: 1px solid #cbd5e1;
       border-radius: 5px;
       box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
       display: flex;
       flex-direction: column;
-      overflow: hidden;
+      overflow: visible;
     }
 
     .vocab-card-header {
-      padding: 2px 6px;
+      padding: 2.5px 6px;
       background: #f8fafc;
       border-bottom: 1px solid #e2e8f0;
+      border-radius: 4px 4px 0 0;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -95,7 +95,7 @@
       display: flex;
       align-items: baseline;
       justify-content: space-between;
-      gap: 4px;
+      gap: 6px;
       line-height: var(--app-line-height);
       border-bottom: 1px solid #f1f5f9;
       cursor: pointer;
@@ -111,9 +111,9 @@
     }
 
     /* Subtle gender-based article coloring */
-    .art-neu { color: #0284c7; font-weight: 600; }
-    .art-fem { color: #e11d48; font-weight: 600; }
-    .art-masc { color: #059669; font-weight: 600; }
+    .art-neu { color: #0284c7; font-weight: 700; }
+    .art-fem { color: #e11d48; font-weight: 700; }
+    .art-masc { color: #059669; font-weight: 700; }
 
     /* Test mode translation blur */
     body.test-mode .ru-translation {
@@ -204,31 +204,31 @@
     }
   </style>
 </head>
-<body class="bg-slate-100 text-slate-900 font-sans antialiased flex flex-col select-none">
+<body class="bg-slate-50 text-slate-900 font-sans antialiased flex flex-col select-none">
 
   <!-- Print Sheet Banner (Only displayed when printing) -->
   <div id="print-banner" class="hidden">
     <div class="text-[8.5pt] font-bold tracking-tight text-slate-900">
-      🇬🇷 Греческий язык: Недвижимость, город, глаголы
+      🇬🇷 Урок 11: Квартиры, аренда, город и глаголы (Ψάχνω για σπίτι)
     </div>
     <div class="text-[7pt] text-slate-500 font-medium">
-      123 слова • A4 Landscape Sheet
+      123 слова и фразы • A4 Landscape Sheet
     </div>
   </div>
 
   <!-- Top Navigation Control Bar (Fixed Height: 38px) -->
-  <header id="screen-header" class="h-[38px] max-h-[38px] bg-white border-b border-slate-200 px-3 flex items-center justify-between gap-2 shadow-xs shrink-0 z-30">
+  <header id="screen-header" class="h-[38px] max-h-[38px] bg-white border-b border-slate-200 px-3 flex items-center justify-between gap-2 shadow-2xs shrink-0 z-30">
     
     <!-- Title & Word Count & Navigation -->
     <div class="flex items-center gap-2 shrink-0">
-      <a href="../index.html" class="flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium text-slate-600 hover:text-sky-700 hover:bg-slate-100 border border-slate-200 transition" title="Вернуться к списку уроков">
-        <span>← Уроки</span>
+      <a href="../index.html" class="flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold text-slate-700 hover:text-sky-700 bg-slate-50 hover:bg-sky-50 border border-slate-200 transition" title="Вернуться к навигатору 20 уроков">
+        <span>← Все 20 уроков</span>
       </a>
-      <div class="w-6 h-6 rounded bg-sky-600 text-white flex items-center justify-center font-bold text-xs">
+      <div class="w-6 h-6 rounded bg-sky-600 text-white flex items-center justify-center font-bold text-xs shadow-2xs">
         11
       </div>
       <div class="flex items-center gap-1.5">
-        <span class="font-bold text-slate-800 text-xs tracking-tight hidden sm:inline">Урок 11: Квартиры и город</span>
+        <span class="font-bold text-slate-900 text-xs tracking-tight hidden sm:inline">Квартиры и город</span>
         <span id="wordCounter" class="px-1.5 py-0.2 rounded-full text-[10px] bg-sky-50 text-sky-700 font-bold border border-sky-200">123 слова</span>
       </div>
     </div>
@@ -239,8 +239,8 @@
         <input 
           type="text" 
           id="searchInput" 
-          placeholder="Поиск (el / ru)..." 
-          class="w-full pl-6 pr-6 py-0.5 text-xs rounded border border-slate-200 focus:outline-none focus:ring-1 focus:ring-sky-500 bg-slate-50 focus:bg-white transition"
+          placeholder="Фильтр слов (el / ru)..." 
+          class="w-full pl-6 pr-6 py-0.5 text-xs rounded border border-slate-200 focus:outline-none focus:ring-1 focus:ring-sky-500 bg-slate-50 focus:bg-white text-slate-900 transition"
         />
         <svg class="w-3.5 h-3.5 text-slate-400 absolute left-1.5 top-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -256,8 +256,8 @@
       <button 
         id="autoFitBtn"
         onclick="toggleAutoFit()"
-        title="Автоматически подогнать размер под высоту окна без скролла"
-        class="px-2 py-0.5 rounded text-[11px] font-semibold border border-sky-300 bg-sky-50 text-sky-700 hover:bg-sky-100 flex items-center gap-1 shadow-2xs"
+        title="Автоматически подогнать размер всех слов под экран без прокрутки"
+        class="px-2 py-0.5 rounded text-[11px] font-semibold border border-sky-300 bg-sky-50 text-sky-700 hover:bg-sky-100 flex items-center gap-1 shadow-2xs cursor-pointer"
       >
         <svg class="w-3 h-3 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
@@ -270,7 +270,7 @@
         id="testBtn"
         onclick="toggleTestMode()"
         title="Скрыть русский перевод для самопроверки"
-        class="px-2 py-0.5 rounded border border-slate-200 hover:bg-slate-100 font-medium text-[11px] text-slate-700 flex items-center gap-1"
+        class="px-2 py-0.5 rounded border border-slate-200 bg-white hover:bg-slate-100 font-medium text-[11px] text-slate-700 flex items-center gap-1 cursor-pointer"
       >
         <span id="testIcon">👁️</span>
         <span class="hidden md:inline" id="testLabel">Тест</span>
@@ -278,8 +278,8 @@
 
       <!-- Font Resizing -->
       <div class="flex items-center border border-slate-200 rounded text-[11px] overflow-hidden bg-white">
-        <button onclick="adjustScale(-0.04)" title="Уменьшить масштаб" class="px-1.5 py-0.5 hover:bg-slate-100 text-slate-700 font-bold border-r border-slate-200">A-</button>
-        <button onclick="adjustScale(0.04)" title="Увеличить масштаб" class="px-1.5 py-0.5 hover:bg-slate-100 text-slate-700 font-bold">A+</button>
+        <button onclick="adjustScale(-0.04)" title="Уменьшить масштаб" class="px-1.5 py-0.5 hover:bg-slate-100 text-slate-700 font-bold border-r border-slate-200 cursor-pointer">A-</button>
+        <button onclick="adjustScale(0.04)" title="Увеличить масштаб" class="px-1.5 py-0.5 hover:bg-slate-100 text-slate-700 font-bold cursor-pointer">A+</button>
       </div>
 
       <!-- Speech Speed -->
@@ -287,7 +287,7 @@
         id="speedBtn"
         onclick="cycleSpeed()"
         title="Скорость греческой озвучки"
-        class="px-1.5 py-0.5 rounded border border-slate-200 hover:bg-slate-100 font-bold text-[11px] text-slate-700"
+        class="px-1.5 py-0.5 rounded border border-slate-200 bg-white hover:bg-slate-100 font-bold text-[11px] text-slate-700 cursor-pointer"
       >
         <span id="speedValue">0.9x</span>
       </button>
@@ -296,7 +296,7 @@
       <button 
         onclick="printA4()"
         title="Распечатать шпаргалку на 1 лист A4 (альбомная)"
-        class="flex items-center gap-1 px-2.5 py-0.5 rounded bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-[11px] shadow-2xs transition"
+        class="flex items-center gap-1 px-2.5 py-0.5 rounded bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-[11px] shadow-2xs transition cursor-pointer"
       >
         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
@@ -316,7 +316,7 @@
   </main>
 
   <script>
-    // Complete 9-section vocabulary database (123 items total)
+    // Complete 10-section vocabulary database (123 items total, balanced ~24-25 words per column)
     const SECTIONS = [
       {
         id: 1,
@@ -393,14 +393,14 @@
           { el: "ο σταθμός (του μετρό/τρένου)", ru: "станция метро / поезда" },
           { el: "το φαρμακείο", ru: "аптека" },
           { el: "ο φούρνος", ru: "пекарня" },
-          { el: "το σούπερ μάρκεт", ru: "супермаркет" },
+          { el: "το σούπερ μάρκετ", ru: "супермаркет" },
           { el: "το περίπτερο", ru: "киоск" },
           { el: "η τράπεζα", ru: "банк" }
         ]
       },
       {
         id: 9,
-        title: "9. Сравнение, возраст, даты",
+        title: "9. Сравнение и даты",
         subtitle: "Σύγκριση & ημερομηνίες",
         badge: "bg-purple-50 text-purple-700 border-purple-200",
         colIndex: 1,
@@ -442,6 +442,22 @@
         ]
       },
       {
+        id: 10,
+        title: "10. Ключевые фразы урока",
+        subtitle: "Φράσεις επανάληψης",
+        badge: "bg-sky-50 text-sky-700 border-sky-200",
+        colIndex: 2,
+        words: [
+          { el: "Ψάχνω για σπίτι", ru: "Я ищу жильё (дом/кв.)" },
+          { el: "Τηλεφωνώ για την αγγελία", ru: "Звоню по объявлению" },
+          { el: "Πόσο είναι το ενοίκιο;", ru: "Сколько стоит аренда?" },
+          { el: "Σε ποιον όροφο είναι;", ru: "На каком этаже находится?" },
+          { el: "Είναι κοντά στο μετρό", ru: "Находится рядом с метро" },
+          { el: "Έχει αυτόνομη θέρμανση;", ru: "Есть автономное отопление?" },
+          { el: "Πόσα τετραγωνικά είναι;", ru: "Сколько квадратных метров?" }
+        ]
+      },
+      {
         id: 5,
         title: "5. Аренда и характеристики",
         subtitle: "Ενοικίαση & περιγραφή",
@@ -460,7 +476,7 @@
           { el: "ενοικιάζεται", ru: "сдается в аренду" },
           { el: "πωλείται", ru: "продается" },
           { el: "επιπλωμένο", ru: "меблированное" },
-          { el: "ανεπιπλωτο", ru: "без мебели" },
+          { el: "ανεπίπλωτο", ru: "без мебели" },
           { el: "ανακαινισμένο", ru: "после ремонта" },
           { el: "νεόδμητο / καινούριο", ru: "новостройка / новое" },
           { el: "παλιό", ru: "старое" },
@@ -524,6 +540,8 @@
       }
     ];
 
+    const TOTAL_WORDS_COUNT = SECTIONS.reduce((acc, s) => acc + s.words.length, 0);
+
     // State Variables
     let speechRate = 0.9;
     let manualScaleMultiplier = 1.0;
@@ -570,52 +588,58 @@
       isAutoFitActive = !isAutoFitActive;
       const btn = document.getElementById('autoFitBtn');
       if (isAutoFitActive) {
-        btn.className = "px-2 py-0.5 rounded text-[11px] font-semibold border border-sky-300 bg-sky-50 text-sky-700 hover:bg-sky-100 flex items-center gap-1 shadow-2xs";
+        btn.className = "px-2 py-0.5 rounded text-[11px] font-semibold border border-sky-300 bg-sky-50 text-sky-700 hover:bg-sky-100 flex items-center gap-1 shadow-2xs cursor-pointer";
         manualScaleMultiplier = 1.0;
       } else {
-        btn.className = "px-2 py-0.5 rounded text-[11px] font-medium border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 flex items-center gap-1";
+        btn.className = "px-2 py-0.5 rounded text-[11px] font-medium border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 flex items-center gap-1 cursor-pointer";
       }
       fitViewport();
     }
 
     function adjustScale(delta) {
       isAutoFitActive = false;
-      document.getElementById('autoFitBtn').className = "px-2 py-0.5 rounded text-[11px] font-medium border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 flex items-center gap-1";
-      manualScaleMultiplier = Math.max(0.65, Math.min(1.4, manualScaleMultiplier + delta));
+      document.getElementById('autoFitBtn').className = "px-2 py-0.5 rounded text-[11px] font-medium border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 flex items-center gap-1 cursor-pointer";
+      manualScaleMultiplier = Math.max(0.65, Math.min(1.35, manualScaleMultiplier + delta));
       fitViewport();
     }
 
-    // Auto-fit Engine that guarantees 100vh fit without scrollbars
+    // Reliable Auto-fit Engine that guarantees 100% of words fit inside the visible screen without clipping
     function fitViewport() {
       const container = document.getElementById('viewport-container');
       const stage = document.getElementById('scale-stage');
       const columnsContainer = document.getElementById('columnsContainer');
       if (!container || !stage || !columnsContainer) return;
 
-      // Reset transform before measuring natural scroll dimensions
-      stage.style.transform = 'scale(1)';
+      // Reset scale and width to natural 100% before measuring real unclipped content height
+      stage.style.transform = 'none';
+      stage.style.width = '100%';
+      stage.style.height = 'auto';
 
-      const availH = container.clientHeight;
-      const availW = container.clientWidth;
-      const neededH = columnsContainer.scrollHeight;
-      const neededW = columnsContainer.scrollWidth;
+      const availH = container.clientHeight - 8;
+      const availW = container.clientWidth - 8;
 
-      if (availH <= 0 || neededH <= 0) return;
+      if (availH <= 0 || availW <= 0) return;
 
-      let targetScale = 1;
       if (isAutoFitActive) {
-        // Calculate factor needed to fit exactly within visible height and width
-        const scaleH = (availH - 8) / neededH;
-        const scaleW = availW / neededW;
-        targetScale = Math.min(1.0, scaleH, scaleW);
+        const naturalH = columnsContainer.offsetHeight;
+        if (naturalH > availH) {
+          // If natural height is taller than viewport, widen the stage and scale down proportionally
+          // so that both width and height fill the screen cleanly
+          const scale = availH / naturalH;
+          stage.style.width = `${100 / scale}%`;
+          // Re-measure after widening (since wider columns may wrap fewer lines)
+          const adjustedH = columnsContainer.offsetHeight;
+          const finalScale = Math.min(1, availH / adjustedH);
+          stage.style.width = `${100 / finalScale}%`;
+          stage.style.transform = `scale(${finalScale})`;
+        } else {
+          stage.style.width = '100%';
+          stage.style.transform = 'scale(1)';
+        }
       } else {
-        targetScale = manualScaleMultiplier;
+        stage.style.width = `${100 / manualScaleMultiplier}%`;
+        stage.style.transform = `scale(${manualScaleMultiplier})`;
       }
-
-      // Apply transform smoothly
-      stage.style.transform = `scale(${targetScale})`;
-      stage.style.width = `${100 / targetScale}%`;
-      stage.style.height = `${100 / targetScale}%`;
     }
 
     // Render the balanced 5 columns
@@ -667,14 +691,14 @@
 
           row.innerHTML = `
             <div class="flex items-baseline gap-1 min-w-0">
-              <span class="font-semibold text-slate-800 leading-tight">${formatGreek(w.el)}</span>
-              <button class="audio-btn opacity-0 group-hover:opacity-100 text-slate-400 hover:text-sky-600 p-0.5" title="Озвучить">
+              <span class="font-semibold text-slate-900 leading-tight">${formatGreek(w.el)}</span>
+              <button class="audio-btn opacity-0 group-hover:opacity-100 text-slate-400 hover:text-sky-600 p-0.5 shrink-0" title="Озвучить">
                 <svg class="w-2.5 h-2.5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path>
                 </svg>
               </button>
             </div>
-            <div class="ru-translation text-slate-500 text-right shrink-0 font-normal">
+            <div class="ru-translation text-slate-600 text-right shrink-0 font-normal">
               ${w.ru}
             </div>
           `;
@@ -686,7 +710,7 @@
       });
 
       cols.forEach(c => container.appendChild(c));
-      document.getElementById('wordCounter').innerText = q ? `${matchedWords} найдено` : '123 слова';
+      document.getElementById('wordCounter').innerText = q ? `${matchedWords} найдено` : `${TOTAL_WORDS_COUNT} слова`;
 
       // Auto-fit after DOM updates
       requestAnimationFrame(fitViewport);

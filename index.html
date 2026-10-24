@@ -3,10 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Греческий язык — Шпаргалки по урокам</title>
+  <title>Греческий язык — Шпаргалки по 20 урокам</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* Full-screen fit design: maximized for desktop view with zero need to scroll if window is open */
     html, body {
       height: 100vh;
       height: 100dvh;
@@ -15,17 +14,16 @@
       padding: 0;
     }
 
-    /* Print styles optimized strictly for 1-page A4 landscape or portrait */
     @page {
-      size: A4 portrait;
-      margin: 8mm;
+      size: A4 landscape;
+      margin: 6mm;
     }
 
     @media print {
       html, body {
         height: auto !important;
         overflow: visible !important;
-        background: #fff !important;
+        background: #ffffff !important;
       }
       .no-print {
         display: none !important;
@@ -43,48 +41,45 @@
       }
     }
 
-    /* Custom thin scrollbar if screen is very small */
-    ::-webkit-scrollbar {
-      width: 5px;
-      height: 5px;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
-      border-radius: 4px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #94a3b8;
+    /* Fallback thin scrollbar for small screens */
+    @media (max-width: 1024px) {
+      html, body {
+        overflow: auto;
+      }
     }
   </style>
 </head>
-<body class="bg-slate-900 text-slate-100 flex flex-col font-sans select-none antialiased">
+<body class="bg-slate-50 text-slate-900 flex flex-col font-sans select-none antialiased">
 
-  <!-- Header Bar -->
-  <header class="h-12 bg-slate-950/80 backdrop-blur border-b border-slate-800/80 px-4 flex items-center justify-between shrink-0 z-20">
-    <div class="flex items-center gap-3">
-      <div class="w-8 h-8 rounded-lg bg-sky-600 flex items-center justify-center font-black text-sm tracking-wider shadow-inner text-white">
+  <!-- Top Navigation Bar (Light Theme, Compact 42px) -->
+  <header class="h-[42px] bg-white border-b border-slate-200 px-4 flex items-center justify-between shrink-0 shadow-2xs z-20">
+    <div class="flex items-center gap-2.5">
+      <div class="w-7 h-7 rounded-md bg-sky-600 flex items-center justify-center font-extrabold text-xs tracking-wider text-white shadow-xs">
         ΕΛ
       </div>
-      <div>
-        <h1 class="font-bold text-sm tracking-tight text-white flex items-center gap-2">
-          <span>Греческий язык</span>
-          <span class="text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full bg-sky-950 text-sky-400 border border-sky-800/60">Шпаргалки · 20 уроков</span>
+      <div class="flex items-baseline gap-2">
+        <h1 class="font-bold text-sm tracking-tight text-slate-900">
+          Греческий язык — Навигатор уроков
         </h1>
-        <p class="text-[10px] text-slate-400">Ключевые слова, фразы для повторения и грамматика каждого урока</p>
+        <span class="hidden sm:inline-block text-[11px] font-semibold px-2 py-0.5 rounded-full bg-sky-50 text-sky-700 border border-sky-200">
+          20 уроков • Ключевые слова и фразы
+        </span>
       </div>
     </div>
 
-    <!-- Quick stats & A4 Print -->
-    <div class="flex items-center gap-3 no-print">
-      <div class="hidden sm:flex items-center gap-2 text-xs text-slate-400 bg-slate-850 px-3 py-1 rounded-md border border-slate-800">
-        <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        <span class="text-slate-300 font-medium">Урок 11</span> готов (123 слова)
-      </div>
+    <div class="flex items-center gap-2.5 no-print">
+      <a
+        href="lessons/lesson_11.html"
+        class="hidden md:flex items-center gap-1.5 text-xs font-semibold text-sky-700 bg-sky-50 hover:bg-sky-100 px-2.5 py-1 rounded border border-sky-200 transition"
+      >
+        <span class="w-2 h-2 rounded-full bg-sky-600"></span>
+        <span>Урок 11: Квартиры (123 слова) →</span>
+      </a>
 
       <button
         onclick="window.print()"
-        title="Печать навигатора на А4"
-        class="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs shadow transition active:scale-95"
+        title="Распечатать список всех 20 уроков на формате А4"
+        class="flex items-center gap-1.5 px-3 py-1 rounded bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-2xs transition cursor-pointer"
       >
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
@@ -94,10 +89,10 @@
     </div>
   </header>
 
-  <!-- Main Viewport: Full screen fit, grid of 20 lessons taking 100% of height and width -->
-  <main id="main-viewport" class="flex-1 p-2 md:p-3 overflow-y-auto lg:overflow-hidden flex flex-col justify-between">
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-2 md:gap-2.5 h-full max-h-full" id="lessonsGrid">
-      <!-- Generated via JS for exact styling and active state -->
+  <!-- Main Viewport: 5x4 Grid fitting 100% of remaining viewport height on desktop -->
+  <main id="main-viewport" class="flex-1 p-2.5 overflow-y-auto lg:overflow-hidden flex flex-col">
+    <div id="lessonsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 lg:grid-rows-4 gap-2.5 w-full h-full">
+      <!-- Populated by JS -->
     </div>
   </main>
 
@@ -107,191 +102,199 @@
         num: 1,
         theme: "Знакомство и приветствие",
         elTitle: "Γεια σας!",
-        phrases: "Γεια σας! · Πώς σε λένε; · Είμαι από... · Χάρηκα",
+        words: ["Γεια σας / Γεια σου", "Πώς σε λένε;", "Είμαι ο/η...", "Από πού είσαι;", "Χάρηκα πολύ", "Καλημέρα / Καλησπέρα"],
         ready: false
       },
       {
         num: 2,
-        theme: "Где ты живёшь? Города и страны",
+        theme: "Где ты живёшь? Город и адрес",
         elTitle: "Πού μένεις;",
-        phrases: "Μένω στην Αθήνα · Πού είναι; · Η οδός · Το κέντρο",
+        words: ["Πού μένεις;", "Μένω στην Αθήνα", "η οδός / ο αριθμός", "το κέντρο", "το τηλέφωνο", "κοντά / μακριά"],
         ready: false
       },
       {
         num: 3,
-        theme: "Профессии и работа",
+        theme: "Профессии, работа и семья",
         elTitle: "Τι δουλειά κάνεις;",
-        phrases: "Είμαι γιατρός / δάσκαλος · Δουλεύω σε εταιρεία · Το επάγγελμα",
+        words: ["Τι δουλειά κάνεις;", "Είμαι γιατρός / δάσκαλος", "δουλεύω σε...", "ο άντρας / η γυναίκα", "τα παιδιά", "παντρεμένος / ελεύθερος"],
         ready: false
       },
       {
         num: 4,
-        theme: "Языки и общение",
+        theme: "Языки и национальности",
         elTitle: "Μιλάς ελληνικά;",
-        phrases: "Μιλάω λίγο ελληνικά · Δεν καταλαβαίνω · Ξέρεις τον/την...;",
+        words: ["Μιλάς ελληνικά;", "Μιλάω λίγο", "Δεν καταλαβαίνω", "Πώς το λένε στα ελληνικά;", "Ξέρεις τον/την...;", "η γλώσσα"],
         ready: false
       },
       {
         num: 5,
-        theme: "Повторение 1–4: Резюме",
+        theme: "Повторение 1–4: О себе",
         elTitle: "Πάμε πάλι! (1)",
-        phrases: "Χαιρετισμοί · Προσωπικά στοιχεία · Εθνικότητες",
+        words: ["Χαιρετισμοί", "Προσωπικά στοιχεία", "Εθνικότητες", "Επαγγέλματα", "Αριθμοί 1–100", "Το ρήμα είμαι / μένω"],
         ready: false
       },
       {
         num: 6,
-        theme: "Транспорт и время",
+        theme: "Транспорт, маршрут и время",
         elTitle: "Πού πάτε;",
-        phrases: "Πάω με το λεωφορείο · Τι ώρα είναι; · Θέλω ένα εισιτήριο",
+        words: ["Πού πάτε;", "Πάω με το λεωφορείο", "Τι ώρα είναι;", "Θέλω ένα εισιτήριο", "Πόσο κάνει;", "με τα πόδια / με το μετρό"],
         ready: false
       },
       {
         num: 7,
-        theme: "Дни недели, погода и распорядок",
+        theme: "Дни недели, погода и рутина",
         elTitle: "Ποτέ την Κυριακή",
-        phrases: "Δε δουλεύω την Κυριακή · Κάνει ζέστη · Τον Οκτώβριο · Ακούω / τρώω",
+        words: ["Δευτέρα – Κυριακή", "Κάνει ζέστη / κρύο", "Πόσον καιρό είσαι εδώ;", "κάθε μέρα / ποτέ", "ακούω, τρώω, λέω", "Οι μήνες & οι εποχές"],
         ready: false
       },
       {
         num: 8,
-        theme: "Кафе, таверна и счет",
+        theme: "Кафе, таверна, еда и заказ",
         elTitle: "Πόσο κάνουν όλα;",
-        phrases: "Τι θέλετε παρακαλώ; · Θα ήθελα έναν καφέ · Τον λογαριασμό",
+        words: ["Τι θέλετε, παρακαλώ;", "Θα ήθελα έναν καφέ", "Πόσο κάνουν όλα;", "Τον λογαριασμό", "το ψωμί / το νερό", "σκέτος / μέτριος / γλυκός"],
         ready: false
       },
       {
         num: 9,
-        theme: "Покупки и магазины",
+        theme: "Покупки, одежда и цвета",
         elTitle: "Πάμε για ψώνια;",
-        phrases: "Πόσο κοστίζει; · Μου κάνει / δε μου κάνει · Τα ρούχα · Χρώματα",
+        words: ["Πόσο κοστίζει;", "Μου αρέσει / μου κάνει", "τα ρούχα & τα παπούτσια", "μεγάλο / μικρό νούμερο", "μετρητά ή κάρτα;", "τα χρώματα"],
         ready: false
       },
       {
         num: 10,
-        theme: "Повторение 6–9: Город и быт",
+        theme: "Повторение 6–9: Город и покупки",
         elTitle: "Πάμε πάλι! (2)",
-        phrases: "Προορισμός · Αγορές · Ώρα και πρόγραμμα · Στο εστιατόριο",
+        words: ["Ώρα & πρόγραμμα", "Στο καφενείο / εστιατόριο", "Στο κατάστημα", "Αριθμοί 100–1000", "Αιτιατική πτώση", "Καθημερινές φράσεις"],
         ready: false
       },
       {
         num: 11,
-        theme: "Квартиры и город",
+        theme: "Квартиры, аренда и город",
         elTitle: "Ψάχνω για σπίτι",
-        phrases: "Το διαμέρισμα · Το ενοίκιο · Ο όροφος · Επιπλωμένο · 123 слова",
+        words: ["το διαμέρισμα / το σπίτι", "το ενοίκιο & τα κοινόχρηστα", "ο όροφος / το ισόγειο", "το σαλόνι, η κουζίνα, το μπάνιο", "έπιπλα & συσκευές", "δίπλα σε / απέναντι από"],
         url: "lessons/lesson_11.html",
-        ready: true,
-        badge: "Шпаргалка готова"
+        ready: true
       },
       {
         num: 12,
-        theme: "Путешествие и выходные (Прошедшее)",
+        theme: "Путешествие и прошедшее время",
         elTitle: "Ένα ταξίδι",
-        phrases: "Πού ήσουν το Σαββατοκύριακο; · Πώς περάσατε; · Χτες / πέρυσι",
+        words: ["Πού ήσουν το Σαββατοκύριακο;", "Πώς περάσατε χτες;", "ταξίδεψα / πήγα", "το ξενοδοχείο / το νησί", "το αεροπλάνο / το πλοίο", "χτες, προχτές, πέρυσι"],
         ready: false
       },
       {
         num: 13,
-        theme: "Биография и праздники",
+        theme: "Биография, события и праздники",
         elTitle: "Η ιστορία της ζωής μου",
-        phrases: "Γεννήθηκα στην... · Χρόνια πολλά! · Να ζήσεις! · Μεγάλωσα",
+        words: ["Γεννήθηκα στην...", "Μεγάλωσα / σπούδασα", "Ήρθα στην Ελλάδα", "Χρόνια πολλά! Να ζήσεις!", "η γιορτή / τα γενέθλια", "παντρεύτηκα / βρήκα δουλειά"],
         ready: false
       },
       {
         num: 14,
-        theme: "Планы на будущее",
+        theme: "Планы на будущее и меню",
         elTitle: "Τι θα κάνουμε;",
-        phrases: "Θα πάμε εκδρομή · Τι θα πιούμε; · Θα έρθει τον άλλο μήνα",
+        words: ["Τι θα κάνουμε το βράδυ;", "Θα σας πω κάτι", "Τι θα πάρετε / πιούμε;", "τον άλλο μήνα / αύριο", "το ορεκτικό / το κυρίως πιάτο", "Στην ταβέρνα"],
         ready: false
       },
       {
         num: 15,
-        theme: "Повторение 11–14: Глаголы",
+        theme: "Повторение 11–14: Времена глаголов",
         elTitle: "Πάμε πάλι! (3)",
-        phrases: "Αόριστος (прошедшее) · Μέλλοντας (будущее) · Σημαντικά ρήματα",
+        words: ["Αόριστος (прошедшее)", "Μέλλοντας (будущее)", "Περιγραφή σπιτιού", "Αφήγηση γεγονότων", "Σύγκριση (πιο... από)", "Ρήματα Γ2 (θυμάμαι, κοιμάμαι)"],
         ready: false
       },
       {
         num: 16,
-        theme: "Досуг и приглашения",
+        theme: "Досуг, кино и приглашения",
         elTitle: "Πάμε βόλτα;",
-        phrases: "Πάμε για καφέ; · Θέλεις να δούμε ταινία; · Προτείνω να...",
+        words: ["Πάμε να πιούμε καφέ;", "Θέλετε να δούμε ταινία;", "το σινεμά / το θέατρο", "Αποφάσισα να...", "Μπορώ να έρθω;", "ελεύθερος χρόνος"],
         ready: false
       },
       {
         num: 17,
-        theme: "Работа и собеседование",
+        theme: "Поиск работы и резюме",
         elTitle: "Πάμε για δουλειά",
-        phrases: "Τηλεφωνώ για την αγγελία · Έχετε εμπειρία; · Το βιογραφικό",
+        words: ["Τηλεφωνώ για την αγγελία", "Έχετε εμπειρία;", "το βιογραφικό", "ο μισθός & το ωράριο", "πλήρης / μερική απασχόληση", "η συνέντευξη"],
         ready: false
       },
       {
         num: 18,
-        theme: "Здоровье и визит к врачу",
+        theme: "У врача, здоровье и аптека",
         elTitle: "Στον γιατρό",
-        phrases: "Πονάει ο λαιμός μου · Έχω πυρετό · Περαστικά! · Τα φάρμακα",
+        words: ["Τι έχετε; Πονάει ο λαιμός μου", "Έχω πυρετό / βήχα", "Περαστικά!", "το φάρμακο / η συνταγή", "το ραντεβού με τον γιατρό", "τα μέρη του σώματος"],
         ready: false
       },
       {
         num: 19,
-        theme: "Сервисы, почта и банк",
+        theme: "Услуги: почта, банк и очередь",
         elTitle: "Περιμένετε στην ουρά!",
-        phrases: "Περιμένετε παρακαλώ · Στο ταχυδρομείο · Στην τράπεζα · Ο λογαριασμός",
+        words: ["Περιμένετε στην ουρά, παρακαλώ!", "το ταχυδρομείο / το δέμα", "η τράπεζα / ο λογαριασμός", "υπογράψτε εδώ", "η ταυτότητα / το διαβατήριο", "Προστακτική (повелительное)"],
         ready: false
       },
       {
         num: 20,
-        theme: "Финальное повторение: Уровень А1",
+        theme: "Итоговое повторение курса А1",
         elTitle: "Πάμε πάλι! (4)",
-        phrases: "Σύνοψη γραμματικής · Βασικό λεξιλόγιο · Διάλογοι καθημερινότητας",
+        words: ["Όλοι οι χρόνοι ρημάτων", "Καθημερινή επικοινωνία", "Σπίτι, πόλη & υπηρεσίες", "Υγεία & εργασία", "Προθέσεις & αντωνυμίες", "Έτοιμοι για το Α2!"],
         ready: false
       }
     ];
 
-    const container = document.getElementById('lessonsGrid');
+    const grid = document.getElementById('lessonsGrid');
 
     LESSONS.forEach(lesson => {
-      const card = document.createElement(lesson.ready ? 'a' : 'div');
+      const el = document.createElement(lesson.ready ? 'a' : 'div');
       if (lesson.ready) {
-        card.href = lesson.url;
+        el.href = lesson.url;
       }
 
-      card.className = `lesson-card group relative flex flex-col justify-between p-2.5 rounded-lg border transition-all duration-150 ${
-        lesson.ready 
-          ? 'bg-gradient-to-br from-sky-900/60 via-slate-850 to-slate-900 border-sky-400/70 hover:border-sky-300 hover:shadow-lg hover:shadow-sky-500/20 cursor-pointer scale-[1.01]' 
-          : 'bg-slate-850/50 border-slate-800/80 opacity-75 hover:opacity-90'
+      el.className = `lesson-card group relative flex flex-col justify-between p-2.5 rounded-lg border transition-all ${
+        lesson.ready
+          ? 'bg-white border-2 border-sky-500 shadow-sm hover:shadow-md hover:border-sky-600 hover:bg-sky-50/30 cursor-pointer ring-2 ring-sky-500/10'
+          : 'bg-white border-slate-200 hover:border-slate-300 shadow-2xs'
       }`;
 
-      card.innerHTML = `
+      const badgeHtml = lesson.ready
+        ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-sky-600 text-white shadow-2xs group-hover:bg-sky-700 transition">Открыть шпаргалку →</span>`
+        : `<span class="px-1.5 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-500 border border-slate-200">Урок ${lesson.num}</span>`;
+
+      const wordsListHtml = lesson.words.map(w => `
+        <span class="inline-block text-[10.5px] leading-snug px-1.5 py-0.5 rounded ${
+          lesson.ready
+            ? 'bg-sky-50 text-sky-900 border border-sky-200/80 font-medium'
+            : 'bg-slate-50 text-slate-600 border border-slate-200/60'
+        }">${w}</span>
+      `).join('');
+
+      el.innerHTML = `
         <div>
-          <div class="flex items-center justify-between gap-1.5 mb-1.5">
-            <span class="w-6 h-6 rounded flex items-center justify-center font-bold text-xs ${
-              lesson.ready ? 'bg-sky-500 text-white shadow' : 'bg-slate-700 text-slate-300'
-            }">
-              ${lesson.num}
-            </span>
-            ${
-              lesson.ready
-                ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-sky-500/20 text-sky-300 border border-sky-400/40 animate-pulse">ОТКРЫТЬ ↗</span>'
-                : '<span class="text-[9px] text-slate-500 font-medium">скоро</span>'
-            }
+          <!-- Card Header -->
+          <div class="flex items-center justify-between gap-1.5 mb-1">
+            <div class="flex items-center gap-1.5 min-w-0">
+              <span class="w-5 h-5 rounded flex items-center justify-center font-extrabold text-[11px] shrink-0 ${
+                lesson.ready ? 'bg-sky-600 text-white' : 'bg-slate-200 text-slate-700'
+              }">
+                ${lesson.num}
+              </span>
+              <span class="text-[11px] font-bold text-sky-700 truncate">${lesson.elTitle}</span>
+            </div>
+            ${badgeHtml}
           </div>
 
-          <div class="font-bold text-[12px] md:text-[13px] leading-tight ${lesson.ready ? 'text-white group-hover:text-sky-200' : 'text-slate-300'} mb-0.5">
+          <!-- Russian Theme Title -->
+          <h2 class="font-bold text-xs md:text-[13px] text-slate-900 leading-tight mb-1.5">
             ${lesson.theme}
-          </div>
-          <div class="text-[11px] font-medium text-sky-400/90 tracking-wide font-serif mb-1">
-            ${lesson.elTitle}
-          </div>
+          </h2>
         </div>
 
-        <div class="pt-1.5 border-t border-slate-800/60 mt-auto">
-          <div class="text-[10px] text-slate-400 line-clamp-2 leading-tight">
-            ${lesson.phrases}
-          </div>
+        <!-- Key Words & Phrases for Repetition -->
+        <div class="pt-1.5 border-t border-slate-100 flex flex-wrap gap-1 content-start">
+          ${wordsListHtml}
         </div>
       `;
 
-      container.appendChild(card);
+      grid.appendChild(el);
     });
   </script>
 </body>
