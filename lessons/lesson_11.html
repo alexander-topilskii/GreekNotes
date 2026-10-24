@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="ru" class="h-full overflow-hidden">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Греческий язык — Недвижимость, город, глаголы</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Strict 100vh viewport clamp - absolutely no window scroll */
+    html, body {
+      height: 100vh;
+      height: 100dvh;
+      max-height: 100vh;
+      max-height: 100dvh;
+      width: 100vw;
+      overflow: hidden !important;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    :root {
+      --app-font-size: 11px;
+      --app-line-height: 1.25;
+      --row-py: 1px;
+      --card-gap: 5px;
+    }
+
+    /* Outer container taking exact remaining screen space */
+    #viewport-container {
+      height: calc(100dvh - 38px);
+      width: 100vw;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 4px;
+      box-sizing: border-box;
+      position: relative;
+    }
+
+    /* The scalable canvas wrapper */
+    #scale-stage {
+      width: 100%;
+      height: 100%;
+      transform-origin: top center;
+      transition: transform 0.12s ease-out;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 5 balanced columns flex grid */
+    .sheet-columns {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 5px;
+      width: 100%;
+      height: 100%;
+      align-items: stretch;
+    }
+
+    .col-stack {
+      display: flex;
+      flex-direction: column;
+      gap: var(--card-gap);
+      min-width: 0;
+      height: 100%;
+    }
+
+    .vocab-card {
+      font-size: var(--app-font-size);
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 5px;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .vocab-card-header {
+      padding: 2px 6px;
+      background: #f8fafc;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-weight: 700;
+      line-height: 1.2;
+      flex-shrink: 0;
+    }
+
+    .vocab-row {
+      padding: var(--row-py) 6px;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 4px;
+      line-height: var(--app-line-height);
+      border-bottom: 1px solid #f1f5f9;
+      cursor: pointer;
+      transition: background-color 0.1s ease;
+    }
+
+    .vocab-row:last-child {
+      border-bottom: none;
+    }
+
+    .vocab-row:hover {
+      background-color: #f0f9ff;
+    }
+
+    /* Subtle gender-based article coloring */
+    .art-neu { color: #0284c7; font-weight: 600; }
+    .art-fem { color: #e11d48; font-weight: 600; }
+    .art-masc { color: #059669; font-weight: 600; }
+
+    /* Test mode translation blur */
+    body.test-mode .ru-translation {
+      filter: blur(4.5px);
+      transition: filter 0.15s ease;
+      cursor: pointer;
+    }
+    body.test-mode .ru-translation:hover,
+    body.test-mode .ru-translation:active {
+      filter: blur(0);
+    }
+
+    /* Print styles strictly tailored for 1 page A4 landscape */
+    @page {
+      size: A4 landscape;
+      margin: 4mm 5mm;
+    }
+
+    @media print {
+      html, body {
+        height: auto !important;
+        overflow: visible !important;
+        background: #ffffff !important;
+        color: #000000 !important;
+        font-size: 7pt !important;
+      }
+
+      #screen-header,
+      .no-print,
+      .audio-btn {
+        display: none !important;
+      }
+
+      #print-banner {
+        display: flex !important;
+        justify-content: space-between;
+        align-items: baseline;
+        border-bottom: 1.2px solid #0f172a;
+        padding-bottom: 1px;
+        margin-bottom: 3px;
+      }
+
+      #viewport-container {
+        height: auto !important;
+        width: 100% !important;
+        padding: 0 !important;
+        overflow: visible !important;
+      }
+
+      #scale-stage {
+        transform: none !important;
+        width: 100% !important;
+        height: auto !important;
+      }
+
+      .sheet-columns {
+        display: grid !important;
+        grid-template-columns: repeat(5, 1fr) !important;
+        gap: 2.5mm !important;
+        height: auto !important;
+      }
+
+      .vocab-card {
+        border: 0.5pt solid #cbd5e1 !important;
+        border-radius: 3px !important;
+        box-shadow: none !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        font-size: 6.8pt !important;
+        margin-bottom: 2mm !important;
+      }
+
+      .vocab-card-header {
+        background: #f1f5f9 !important;
+        padding: 1px 3px !important;
+        border-bottom: 0.5pt solid #cbd5e1 !important;
+      }
+
+      .vocab-row {
+        padding: 0.6px 3px !important;
+        border-bottom: 0.5pt solid #f1f5f9 !important;
+      }
+
+      .ru-translation {
+        filter: none !important;
+        color: #334155 !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-900 font-sans antialiased flex flex-col select-none">
+
+  <!-- Print Sheet Banner (Only displayed when printing) -->
+  <div id="print-banner" class="hidden">
+    <div class="text-[8.5pt] font-bold tracking-tight text-slate-900">
+      🇬🇷 Греческий язык: Недвижимость, город, глаголы
+    </div>
+    <div class="text-[7pt] text-slate-500 font-medium">
+      123 слова • A4 Landscape Sheet
+    </div>
+  </div>
+
+  <!-- Top Navigation Control Bar (Fixed Height: 38px) -->
+  <header id="screen-header" class="h-[38px] max-h-[38px] bg-white border-b border-slate-200 px-3 flex items-center justify-between gap-2 shadow-xs shrink-0 z-30">
+    
+    <!-- Title & Word Count & Navigation -->
+    <div class="flex items-center gap-2 shrink-0">
+      <a href="../index.html" class="flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium text-slate-600 hover:text-sky-700 hover:bg-slate-100 border border-slate-200 transition" title="Вернуться к списку уроков">
+        <span>← Уроки</span>
+      </a>
+      <div class="w-6 h-6 rounded bg-sky-600 text-white flex items-center justify-center font-bold text-xs">
+        11
+      </div>
+      <div class="flex items-center gap-1.5">
+        <span class="font-bold text-slate-800 text-xs tracking-tight hidden sm:inline">Урок 11: Квартиры и город</span>
+        <span id="wordCounter" class="px-1.5 py-0.2 rounded-full text-[10px] bg-sky-50 text-sky-700 font-bold border border-sky-200">123 слова</span>
+      </div>
+    </div>
+
+    <!-- Compact Search Box -->
+    <div class="flex-1 max-w-xs min-w-[120px]">
+      <div class="relative">
+        <input 
+          type="text" 
+          id="searchInput" 
+          placeholder="Поиск (el / ru)..." 
+          class="w-full pl-6 pr-6 py-0.5 text-xs rounded border border-slate-200 focus:outline-none focus:ring-1 focus:ring-sky-500 bg-slate-50 focus:bg-white transition"
+        />
+        <svg class="w-3.5 h-3.5 text-slate-400 absolute left-1.5 top-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+        <button id="clearSearchBtn" class="hidden absolute right-1.5 top-0.5 text-slate-400 hover:text-slate-600 text-xs">✕</button>
+      </div>
+    </div>
+
+    <!-- Action Toolbar -->
+    <div class="flex items-center gap-1 shrink-0 text-xs">
+      
+      <!-- 100% Fit Toggle -->
+      <button 
+        id="autoFitBtn"
+        onclick="toggleAutoFit()"
+        title="Автоматически подогнать размер под высоту окна без скролла"
+        class="px-2 py-0.5 rounded text-[11px] font-semibold border border-sky-300 bg-sky-50 text-sky-700 hover:bg-sky-100 flex items-center gap-1 shadow-2xs"
+      >
+        <svg class="w-3 h-3 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+        </svg>
+        <span class="hidden md:inline">В экран</span>
+      </button>
+
+      <!-- Test Mode (Blur translations) -->
+      <button 
+        id="testBtn"
+        onclick="toggleTestMode()"
+        title="Скрыть русский перевод для самопроверки"
+        class="px-2 py-0.5 rounded border border-slate-200 hover:bg-slate-100 font-medium text-[11px] text-slate-700 flex items-center gap-1"
+      >
+        <span id="testIcon">👁️</span>
+        <span class="hidden md:inline" id="testLabel">Тест</span>
+      </button>
+
+      <!-- Font Resizing -->
+      <div class="flex items-center border border-slate-200 rounded text-[11px] overflow-hidden bg-white">
+        <button onclick="adjustScale(-0.04)" title="Уменьшить масштаб" class="px-1.5 py-0.5 hover:bg-slate-100 text-slate-700 font-bold border-r border-slate-200">A-</button>
+        <button onclick="adjustScale(0.04)" title="Увеличить масштаб" class="px-1.5 py-0.5 hover:bg-slate-100 text-slate-700 font-bold">A+</button>
+      </div>
+
+      <!-- Speech Speed -->
+      <button 
+        id="speedBtn"
+        onclick="cycleSpeed()"
+        title="Скорость греческой озвучки"
+        class="px-1.5 py-0.5 rounded border border-slate-200 hover:bg-slate-100 font-bold text-[11px] text-slate-700"
+      >
+        <span id="speedValue">0.9x</span>
+      </button>
+
+      <!-- Print A4 -->
+      <button 
+        onclick="printA4()"
+        title="Распечатать шпаргалку на 1 лист A4 (альбомная)"
+        class="flex items-center gap-1 px-2.5 py-0.5 rounded bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-[11px] shadow-2xs transition"
+      >
+        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+        </svg>
+        <span>Печать А4</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Viewport Stage (100dvh minus header) -->
+  <main id="viewport-container">
+    <div id="scale-stage">
+      <div id="columnsContainer" class="sheet-columns">
+        <!-- 5 balanced columns rendered dynamically -->
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Complete 9-section vocabulary database (123 items total)
+    const SECTIONS = [
+      {
+        id: 1,
+        title: "1. Типы жилья",
+        subtitle: "Τύποι κατοικιών",
+        badge: "bg-blue-50 text-blue-700 border-blue-200",
+        colIndex: 0,
+        words: [
+          { el: "το σπίτι", ru: "дом" },
+          { el: "το διαμέρισμα", ru: "квартира" },
+          { el: "η πολυκατοικία", ru: "многоквартирный дом" },
+          { el: "η μονοκατοικία", ru: "частный (отдельный) дом" },
+          { el: "η μεζονέτα", ru: "мезонет (двухуровневый)" },
+          { el: "το στούντιο", ru: "квартира-студия" },
+          { el: "η γκαρσονιέρα", ru: "однокомнатная кв-ра" },
+          { el: "το δυάρι", ru: "двухкомнатная квартира" },
+          { el: "το τριάρι", ru: "трехкомнатная квартира" },
+          { el: "το τεσσάρι", ru: "четырехкомнатная кв-ра" }
+        ]
+      },
+      {
+        id: 2,
+        title: "2. Этажи и части дома",
+        subtitle: "Όροφοι & μέρη",
+        badge: "bg-indigo-50 text-indigo-700 border-indigo-200",
+        colIndex: 0,
+        words: [
+          { el: "ο όροφος", ru: "этаж" },
+          { el: "το ισόγειο", ru: "первый этаж (ground floor)" },
+          { el: "ο πρώτος (1ος) όροφος", ru: "второй этаж (1-й греч.)" },
+          { el: "ο δεύτερος (2ος) όροφος", ru: "третий этаж (2-й)" },
+          { el: "ο τρίτος (3ος) όροφος", ru: "четвертый этаж (3-й)" },
+          { el: "ο τέταρτος (4ος) όροφος", ru: "пятый этаж (4-й)" },
+          { el: "ο πέμπτος (5ος) όροφος", ru: "шестой этаж (5-й)" },
+          { el: "το ρετιρέ", ru: "пентхаус (верхний с террасой)" },
+          { el: "το υπόγειο", ru: "подвал, цокольный этаж" },
+          { el: "το ασανσέρ", ru: "лифт" },
+          { el: "η σκάλα", ru: "лестница" },
+          { el: "η είσοδος", ru: "вход" },
+          { el: "το μπαλκόνι / η βεράντα", ru: "балкон / терраса" },
+          { el: "ο κήπος", ru: "сад" },
+          { el: "το γκαράζ / το πάρκινγκ", ru: "гараж / парковка" }
+        ]
+      },
+      {
+        id: 3,
+        title: "3. Комнаты и зоны",
+        subtitle: "Δωμάτια & χώροι",
+        badge: "bg-cyan-50 text-cyan-700 border-cyan-200",
+        colIndex: 1,
+        words: [
+          { el: "το δωμάτιο", ru: "комната" },
+          { el: "το σαλόνι", ru: "гостиная" },
+          { el: "το καθιστικό", ru: "общая комната, гостиная" },
+          { el: "η κρεβατοκάμαρα / το υπνοδωμάτιο", ru: "спальня" },
+          { el: "η κουζίνα", ru: "кухня" },
+          { el: "το μπάνιο", ru: "ванная комната" },
+          { el: "το WC / η τουαλέτα", ru: "туалет (гостевой с/у)" },
+          { el: "ο διάδρομος", ru: "коридор" },
+          { el: "η αποθήκη", ru: "кладовка" }
+        ]
+      },
+      {
+        id: 7,
+        title: "7. Городские объекты",
+        subtitle: "Σημεία στην πόλη",
+        badge: "bg-teal-50 text-teal-700 border-teal-200",
+        colIndex: 1,
+        words: [
+          { el: "η γειτονιά / η συνοικία", ru: "район, квартал" },
+          { el: "ο δρόμος / η οδός", ru: "улица" },
+          { el: "η πλατεία", ru: "площадь" },
+          { el: "η στάση (του λεωφορείου)", ru: "остановка автобуса" },
+          { el: "ο σταθμός (του μετρό/τρένου)", ru: "станция метро / поезда" },
+          { el: "το φαρμακείο", ru: "аптека" },
+          { el: "ο φούρνος", ru: "пекарня" },
+          { el: "το σούπερ μάρκεт", ru: "супермаркет" },
+          { el: "το περίπτερο", ru: "киоск" },
+          { el: "η τράπεζα", ru: "банк" }
+        ]
+      },
+      {
+        id: 9,
+        title: "9. Сравнение, возраст, даты",
+        subtitle: "Σύγκριση & ημερομηνίες",
+        badge: "bg-purple-50 text-purple-700 border-purple-200",
+        colIndex: 1,
+        words: [
+          { el: "πιο ... από", ru: "более ... чем" },
+          { el: "ο χρόνος / η χρονιά", ru: "год" },
+          { el: "Είμαι ... χρονών / χρόνων", ru: "Мне ... лет" },
+          { el: "η ημερομηνία", ru: "дата" },
+          { el: "η πρώτη του μηνός", ru: "первое число месяца" }
+        ]
+      },
+      {
+        id: 4,
+        title: "4. Мебель, техника, удобства",
+        subtitle: "Έπιπλα & συσκευές",
+        badge: "bg-amber-50 text-amber-700 border-amber-200",
+        colIndex: 2,
+        words: [
+          { el: "το έπιπλο (τα έπιπλα)", ru: "мебель" },
+          { el: "το κρεβάτι", ru: "кровать" },
+          { el: "ο καναπές", ru: "диван" },
+          { el: "η πολυθρόνα", ru: "кресло" },
+          { el: "το τραπέζι", ru: "стол" },
+          { el: "η καρέκλα", ru: "стул" },
+          { el: "η ντουλάπα", ru: "платяной шкаф" },
+          { el: "το κομοδίνο", ru: "прикроватная тумбочка" },
+          { el: "το γραφείο", ru: "письменный стол / кабинет" },
+          { el: "η βιβλιοθήκη", ru: "книжный шкаф / полка" },
+          { el: "το χαλί", ru: "ковер" },
+          { el: "η κουρτίνα", ru: "штора, занавеска" },
+          { el: "το φωτιστικό", ru: "светильник, люстра" },
+          { el: "το ψυγείο", ru: "холодильник" },
+          { el: "η ηλεκτρική κουζίνα", ru: "электрическая плита" },
+          { el: "το πλυντήριο (ρούχων/πιάτων)", ru: "стиральная / посудомойка" },
+          { el: "ο φούρνος μικροκυμάτων", ru: "микроволновая печь" },
+          { el: "το κλιματιστικό / αιρκοντίσιον", ru: "кондиционер" },
+          { el: "η θέρμανση (κεντρική/αυτόνομη)", ru: "отопление (центр. / авт.)" },
+          { el: "το καλοριφέρ", ru: "батарея отопления" }
+        ]
+      },
+      {
+        id: 5,
+        title: "5. Аренда и характеристики",
+        subtitle: "Ενοικίαση & περιγραφή",
+        badge: "bg-emerald-50 text-emerald-700 border-emerald-200",
+        colIndex: 3,
+        words: [
+          { el: "το ενοίκιο", ru: "арендная плата" },
+          { el: "ο ιδιοκτήτης / η ιδιοκτήτρια", ru: "владелец / владелица" },
+          { el: "ο ένοικος / ο νοικάρης", ru: "жилец, арендатор" },
+          { el: "τα κοινόχρηστα", ru: "коммунальные платежи" },
+          { el: "η αγγελία", ru: "объявление" },
+          { el: "η εφημερίδα", ru: "газета" },
+          { el: "το μεσιτικό γραφείο", ru: "агентство недвижимости" },
+          { el: "ο μεσίτης", ru: "риелтор, агент" },
+          { el: "το τετραγωνικό μέτρο (τ.μ.)", ru: "кв. метр (кв. м)" },
+          { el: "ενοικιάζεται", ru: "сдается в аренду" },
+          { el: "πωλείται", ru: "продается" },
+          { el: "επιπλωμένο", ru: "меблированное" },
+          { el: "ανεπιπλωτο", ru: "без мебели" },
+          { el: "ανακαινισμένο", ru: "после ремонта" },
+          { el: "νεόδμητο / καινούριο", ru: "новостройка / новое" },
+          { el: "παλιό", ru: "старое" },
+          { el: "φωτεινό", ru: "светлое" },
+          { el: "σκοτεινό", ru: "темное" },
+          { el: "ήσυχο", ru: "тихое" },
+          { el: "θορυβώδες", ru: "шумное" },
+          { el: "ευρύχωρο", ru: "просторное" },
+          { el: "ακριβό", ru: "дорогое" },
+          { el: "φθηνό", ru: "дешевое" },
+          { el: "κατάλληλο για φοιτητές", ru: "подходящее для студентов" }
+        ]
+      },
+      {
+        id: 6,
+        title: "6. Предлоги и направления",
+        subtitle: "Τοπικές προθέσεις & οδηγίες",
+        badge: "bg-rose-50 text-rose-700 border-rose-200",
+        colIndex: 4,
+        words: [
+          { el: "δίπλα σε", ru: "рядом с, около" },
+          { el: "απέναντι από", ru: "напротив (через дорогу)" },
+          { el: "ανάμεσα σε", ru: "между" },
+          { el: "μπροστά από / σε", ru: "перед" },
+          { el: "πίσω από", ru: "позади, сзади" },
+          { el: "πάνω σε / από", ru: "на / над" },
+          { el: "κάτω από", ru: "под" },
+          { el: "μέσα σε", ru: "внутри, в" },
+          { el: "έξω από", ru: "снаружи, вне" },
+          { el: "κοντά σε", ru: "близко к" },
+          { el: "μακριά από", ru: "далеко от" },
+          { el: "δεξιά (από)", ru: "справа (от)" },
+          { el: "αριστερά (από)", ru: "слева (от)" },
+          { el: "ευθεία", ru: "прямо" },
+          { el: "στο τέλος του δρόμου", ru: "в конце улицы" },
+          { el: "στη γωνία", ru: "на углу" },
+          { el: "στα φανάρια", ru: "на светофоре" }
+        ]
+      },
+      {
+        id: 8,
+        title: "8. Глаголы темы",
+        subtitle: "Ρήματα (Γ2 & άλλα)",
+        badge: "bg-violet-50 text-violet-700 border-violet-200",
+        colIndex: 4,
+        words: [
+          { el: "θυμάμαι", ru: "помнить (Γ2)" },
+          { el: "φοβάμαι", ru: "бояться (Γ2)" },
+          { el: "κοιμάμαι", ru: "спать (Γ2)" },
+          { el: "λυπάμαι", ru: "сожалеть, извиняться" },
+          { el: "ψάχνω (για)", ru: "искать" },
+          { el: "νοικιάζω", ru: "снимать / сдавать" },
+          { el: "μετακομίζω", ru: "переезжать" },
+          { el: "στρίβω", ru: "поворачивать" },
+          { el: "προχωράω / περπατάω", ru: "идти вперед / пешком" },
+          { el: "περνάω (απέναντι)", ru: "переходить дорогу" },
+          { el: "βρίσκω / βρίσκεται", ru: "находить / находится" },
+          { el: "κοστίζει", ru: "стоит (по цене)" },
+          { el: "διαλέγω", ru: "выбирать" }
+        ]
+      }
+    ];
+
+    // State Variables
+    let speechRate = 0.9;
+    let manualScaleMultiplier = 1.0;
+    let isAutoFitActive = true;
+    let searchQuery = '';
+    const speedCycle = [0.7, 0.9, 1.0];
+
+    // Format Greek articles
+    function formatGreek(text) {
+      return text.replace(/^(το|τα|η|οι|ο)\s+/i, (match, art) => {
+        const lower = art.toLowerCase();
+        let cls = 'art-neu';
+        if (lower === 'η' || lower === 'οι') cls = 'art-fem';
+        else if (lower === 'ο') cls = 'art-masc';
+        return `<span class="${cls}">${art}</span> `;
+      });
+    }
+
+    // Text to Speech
+    function speak(text, e) {
+      if (e) e.stopPropagation();
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const clean = text.replace(/\(.*?\)/g, '').replace(/\/.*/, '').trim();
+      const utter = new SpeechSynthesisUtterance(clean);
+      utter.lang = 'el-GR';
+      utter.rate = speechRate;
+      window.speechSynthesis.speak(utter);
+    }
+
+    function cycleSpeed() {
+      const idx = speedCycle.indexOf(speechRate);
+      speechRate = speedCycle[(idx + 1) % speedCycle.length];
+      document.getElementById('speedValue').innerText = speechRate + 'x';
+    }
+
+    function toggleTestMode() {
+      const isTest = document.body.classList.toggle('test-mode');
+      document.getElementById('testIcon').innerText = isTest ? '🙈' : '👁️';
+      document.getElementById('testLabel').innerText = isTest ? 'Ответы' : 'Тест';
+    }
+
+    function toggleAutoFit() {
+      isAutoFitActive = !isAutoFitActive;
+      const btn = document.getElementById('autoFitBtn');
+      if (isAutoFitActive) {
+        btn.className = "px-2 py-0.5 rounded text-[11px] font-semibold border border-sky-300 bg-sky-50 text-sky-700 hover:bg-sky-100 flex items-center gap-1 shadow-2xs";
+        manualScaleMultiplier = 1.0;
+      } else {
+        btn.className = "px-2 py-0.5 rounded text-[11px] font-medium border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 flex items-center gap-1";
+      }
+      fitViewport();
+    }
+
+    function adjustScale(delta) {
+      isAutoFitActive = false;
+      document.getElementById('autoFitBtn').className = "px-2 py-0.5 rounded text-[11px] font-medium border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 flex items-center gap-1";
+      manualScaleMultiplier = Math.max(0.65, Math.min(1.4, manualScaleMultiplier + delta));
+      fitViewport();
+    }
+
+    // Auto-fit Engine that guarantees 100vh fit without scrollbars
+    function fitViewport() {
+      const container = document.getElementById('viewport-container');
+      const stage = document.getElementById('scale-stage');
+      const columnsContainer = document.getElementById('columnsContainer');
+      if (!container || !stage || !columnsContainer) return;
+
+      // Reset transform before measuring natural scroll dimensions
+      stage.style.transform = 'scale(1)';
+
+      const availH = container.clientHeight;
+      const availW = container.clientWidth;
+      const neededH = columnsContainer.scrollHeight;
+      const neededW = columnsContainer.scrollWidth;
+
+      if (availH <= 0 || neededH <= 0) return;
+
+      let targetScale = 1;
+      if (isAutoFitActive) {
+        // Calculate factor needed to fit exactly within visible height and width
+        const scaleH = (availH - 8) / neededH;
+        const scaleW = availW / neededW;
+        targetScale = Math.min(1.0, scaleH, scaleW);
+      } else {
+        targetScale = manualScaleMultiplier;
+      }
+
+      // Apply transform smoothly
+      stage.style.transform = `scale(${targetScale})`;
+      stage.style.width = `${100 / targetScale}%`;
+      stage.style.height = `${100 / targetScale}%`;
+    }
+
+    // Render the balanced 5 columns
+    function render() {
+      const container = document.getElementById('columnsContainer');
+      container.innerHTML = '';
+
+      // Create 5 columns
+      const cols = [0, 1, 2, 3, 4].map(() => {
+        const div = document.createElement('div');
+        div.className = 'col-stack';
+        return div;
+      });
+
+      let matchedWords = 0;
+      const q = searchQuery.toLowerCase().trim();
+
+      SECTIONS.forEach(sec => {
+        const words = sec.words.filter(w => {
+          if (!q) return true;
+          return w.el.toLowerCase().includes(q) || w.ru.toLowerCase().includes(q);
+        });
+
+        if (words.length === 0) return;
+        matchedWords += words.length;
+
+        const card = document.createElement('div');
+        card.className = 'vocab-card';
+
+        const header = document.createElement('div');
+        header.className = 'vocab-card-header text-slate-800';
+        header.innerHTML = `
+          <div class="truncate">
+            <span class="text-[11px] font-bold text-slate-800">${sec.title}</span>
+            <span class="text-[9.5px] text-slate-400 font-normal ml-0.5">(${sec.subtitle})</span>
+          </div>
+          <span class="text-[9.5px] font-bold px-1 rounded border ${sec.badge}">${words.length}</span>
+        `;
+        card.appendChild(header);
+
+        const list = document.createElement('div');
+        list.className = 'flex flex-col';
+
+        words.forEach(w => {
+          const row = document.createElement('div');
+          row.className = 'vocab-row group';
+          row.onclick = (e) => speak(w.el, e);
+          row.title = 'Кликните для озвучки';
+
+          row.innerHTML = `
+            <div class="flex items-baseline gap-1 min-w-0">
+              <span class="font-semibold text-slate-800 leading-tight">${formatGreek(w.el)}</span>
+              <button class="audio-btn opacity-0 group-hover:opacity-100 text-slate-400 hover:text-sky-600 p-0.5" title="Озвучить">
+                <svg class="w-2.5 h-2.5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path>
+                </svg>
+              </button>
+            </div>
+            <div class="ru-translation text-slate-500 text-right shrink-0 font-normal">
+              ${w.ru}
+            </div>
+          `;
+          list.appendChild(row);
+        });
+
+        card.appendChild(list);
+        cols[sec.colIndex].appendChild(card);
+      });
+
+      cols.forEach(c => container.appendChild(c));
+      document.getElementById('wordCounter').innerText = q ? `${matchedWords} найдено` : '123 слова';
+
+      // Auto-fit after DOM updates
+      requestAnimationFrame(fitViewport);
+    }
+
+    // Print A4 Function
+    function printA4() {
+      const wasTest = document.body.classList.contains('test-mode');
+      const wasQuery = searchQuery;
+
+      if (wasTest) document.body.classList.remove('test-mode');
+      if (wasQuery) {
+        searchQuery = '';
+        document.getElementById('searchInput').value = '';
+        render();
+      }
+
+      window.print();
+
+      if (wasTest) document.body.classList.add('test-mode');
+      if (wasQuery) {
+        searchQuery = wasQuery;
+        document.getElementById('searchInput').value = wasQuery;
+        render();
+      }
+    }
+
+    // Search events
+    const searchInput = document.getElementById('searchInput');
+    const clearBtn = document.getElementById('clearSearchBtn');
+
+    searchInput.addEventListener('input', (e) => {
+      searchQuery = e.target.value;
+      clearBtn.classList.toggle('hidden', !searchQuery);
+      render();
+    });
+
+    clearBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      searchQuery = '';
+      clearBtn.classList.add('hidden');
+      render();
+      searchInput.focus();
+    });
+
+    // Resize observer to ensure 100vh fit on any window/screen resize
+    window.addEventListener('resize', () => {
+      fitViewport();
+    });
+
+    // Initial render and voice initialization
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+    }
+
+    render();
+  </script>
+</body>
+</html>
