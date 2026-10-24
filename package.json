@@ -1,9 +1,12 @@
 {
   "name": "GreekNotes",
   "version": "1.0.0",
-  "description": "",
-  "main": "dist/index.js",
+  "description": "Greek language vocabulary & phrases cheat sheets (20 lessons)",
+  "main": "index.html",
   "scripts": {
+    "preview": "python3 -m http.server 3000",
+    "start": "python3 -m http.server 3000",
+    "dev": "npx --yes serve . -l 3000",
     "build": "tsc"
   },
   "dependencies": {},
