@@ -1,22 +1,217 @@
 <!DOCTYPE html>
-<html lang="ru" class="h-full">
+<html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Греческий язык — Шпаргалки по 20 урокам</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    html, body {
-      height: 100vh;
-      height: 100dvh;
-      overflow: hidden;
-      margin: 0;
-      padding: 0;
+    :root {
+      --app-font-size: 11px;
+      --app-line-height: 1.25;
+      --row-py: 2px;
+      --card-gap: 6px;
     }
 
+    /* Desktop mode (>= 1024px): strict 100vh viewport clamp, zero scroll, 5 balanced columns */
+    @media (min-width: 1024px) {
+      html, body {
+        height: 100vh;
+        height: 100dvh;
+        max-height: 100vh;
+        max-height: 100dvh;
+        width: 100vw;
+        overflow: hidden !important;
+        margin: 0;
+        padding: 0;
+        user-select: none;
+      }
+
+      #viewport-container {
+        height: calc(100dvh - 38px);
+        width: 100vw;
+        overflow: hidden;
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-start;
+        padding: 5px;
+        box-sizing: border-box;
+        position: relative;
+      }
+
+      #scale-stage {
+        width: 100%;
+        height: auto;
+        transform-origin: top left;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .sheet-columns {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: var(--card-gap);
+        width: 100%;
+        height: auto;
+        align-items: start;
+      }
+
+      .col-stack {
+        display: flex;
+        flex-direction: column;
+        gap: var(--card-gap);
+        min-width: 0;
+        height: auto;
+      }
+    }
+
+    /* Mobile & Tablet mode (< 1024px): vertical scrollable "sausage" feed */
+    @media (max-width: 1023px) {
+      :root {
+        --app-font-size: 13.5px;
+        --app-line-height: 1.4;
+        --row-py: 5.5px;
+        --card-gap: 10px;
+      }
+
+      html, body {
+        height: auto;
+        min-height: 100dvh;
+        overflow-x: hidden;
+        overflow-y: auto !important;
+        margin: 0;
+        padding: 0;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      #screen-header {
+        position: sticky;
+        top: 0;
+        height: auto !important;
+        max-height: none !important;
+        padding: 8px 10px !important;
+        flex-wrap: wrap;
+      }
+
+      #viewport-container {
+        height: auto !important;
+        width: 100% !important;
+        overflow: visible !important;
+        padding: 10px 10px 32px 10px;
+        box-sizing: border-box;
+      }
+
+      #scale-stage {
+        transform: none !important;
+        width: 100% !important;
+        height: auto !important;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .sheet-columns {
+        display: flex;
+        flex-direction: column;
+        gap: var(--card-gap);
+        width: 100%;
+      }
+
+      .col-stack {
+        display: flex;
+        flex-direction: column;
+        gap: var(--card-gap);
+        width: 100%;
+      }
+
+      .vocab-card-header {
+        padding: 6px 10px !important;
+      }
+
+      .vocab-row {
+        padding: var(--row-py) 10px !important;
+      }
+
+      .audio-btn {
+        opacity: 0.75 !important;
+      }
+    }
+
+    .vocab-card {
+      font-size: var(--app-font-size);
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 5px;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+      display: flex;
+      flex-direction: column;
+      overflow: visible;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .vocab-card.ready-lesson {
+      border: 1.5px solid #0284c7;
+      box-shadow: 0 2px 8px -1px rgba(2, 132, 199, 0.15);
+    }
+
+    .vocab-card-header {
+      padding: 3px 6px;
+      background: #f8fafc;
+      border-bottom: 1px solid #e2e8f0;
+      border-radius: 4px 4px 0 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4px;
+      font-weight: 700;
+      line-height: 1.2;
+      flex-shrink: 0;
+    }
+
+    .vocab-card.ready-lesson .vocab-card-header {
+      background: #f0f9ff;
+      border-bottom: 1px solid #bae6fd;
+    }
+
+    .vocab-row {
+      padding: var(--row-py) 6px;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 6px;
+      line-height: var(--app-line-height);
+      border-bottom: 1px solid #f1f5f9;
+      cursor: pointer;
+      transition: background-color 0.1s ease;
+    }
+
+    .vocab-row:last-child {
+      border-bottom: none;
+    }
+
+    .vocab-row:hover {
+      background-color: #f0f9ff;
+    }
+
+    /* Subtle gender-based article coloring */
+    .art-neu { color: #0284c7; font-weight: 700; }
+    .art-fem { color: #e11d48; font-weight: 700; }
+    .art-masc { color: #059669; font-weight: 700; }
+
+    /* Test mode translation blur */
+    body.test-mode .ru-translation {
+      filter: blur(4.5px);
+      transition: filter 0.15s ease;
+      cursor: pointer;
+    }
+    body.test-mode .ru-translation:hover,
+    body.test-mode .ru-translation:active {
+      filter: blur(0);
+    }
+
+    /* Print styles strictly tailored for 1 page A4 landscape */
     @page {
       size: A4 landscape;
-      margin: 6mm;
+      margin: 4mm 5mm;
     }
 
     @media print {
@@ -24,278 +219,721 @@
         height: auto !important;
         overflow: visible !important;
         background: #ffffff !important;
+        color: #000000 !important;
+        font-size: 7pt !important;
       }
-      .no-print {
+
+      #screen-header,
+      .no-print,
+      .audio-btn {
         display: none !important;
       }
-      #main-viewport {
-        overflow: visible !important;
+
+      #print-banner {
+        display: flex !important;
+        justify-content: space-between;
+        align-items: baseline;
+        border-bottom: 1.2px solid #0f172a;
+        padding-bottom: 1px;
+        margin-bottom: 3px;
+      }
+
+      #viewport-container {
+        height: auto !important;
+        width: 100% !important;
         padding: 0 !important;
+        overflow: visible !important;
+      }
+
+      #scale-stage {
+        transform: none !important;
+        width: 100% !important;
         height: auto !important;
       }
-      .lesson-card {
-        break-inside: avoid !important;
-        page-break-inside: avoid !important;
-        box-shadow: none !important;
-        border: 1px solid #cbd5e1 !important;
-      }
-    }
 
-    /* Fallback thin scrollbar for small screens */
-    @media (max-width: 1024px) {
-      html, body {
-        overflow: auto;
+      .sheet-columns {
+        display: grid !important;
+        grid-template-columns: repeat(5, 1fr) !important;
+        gap: 2.5mm !important;
+        height: auto !important;
+      }
+
+      .vocab-card {
+        border: 0.5pt solid #cbd5e1 !important;
+        border-radius: 3px !important;
+        box-shadow: none !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        font-size: 6.8pt !important;
+        margin-bottom: 2mm !important;
+      }
+
+      .vocab-card-header {
+        background: #f1f5f9 !important;
+        padding: 1px 3px !important;
+        border-bottom: 0.5pt solid #cbd5e1 !important;
+      }
+
+      .vocab-row {
+        padding: 0.6px 3px !important;
+        border-bottom: 0.5pt solid #f1f5f9 !important;
+      }
+
+      .ru-translation {
+        filter: none !important;
+        color: #334155 !important;
       }
     }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-900 flex flex-col font-sans select-none antialiased">
+<body class="bg-slate-100 text-slate-900 font-sans antialiased flex flex-col">
 
-  <!-- Top Navigation Bar (Light Theme, Compact 42px) -->
-  <header class="h-[42px] bg-white border-b border-slate-200 px-4 flex items-center justify-between shrink-0 shadow-2xs z-20">
-    <div class="flex items-center gap-2.5">
-      <div class="w-7 h-7 rounded-md bg-sky-600 flex items-center justify-center font-extrabold text-xs tracking-wider text-white shadow-xs">
+  <!-- Print Sheet Banner (Only displayed when printing) -->
+  <div id="print-banner" class="hidden">
+    <div class="text-[8.5pt] font-bold tracking-tight text-slate-900">
+      🇬🇷 Греческий язык: Навигатор по 20 урокам — Ключевые слова и фразы
+    </div>
+    <div class="text-[7pt] text-slate-500 font-medium">
+      20 уроков • A4 Landscape Sheet
+    </div>
+  </div>
+
+  <!-- Top Navigation Control Bar (Identical styling to lesson_11.html) -->
+  <header id="screen-header" class="h-[38px] max-h-[38px] bg-white border-b border-slate-200 px-3 flex items-center justify-between gap-2 shadow-2xs shrink-0 z-30">
+    
+    <!-- Title & Lesson Counter -->
+    <div class="flex items-center gap-2 shrink-0">
+      <div class="w-6 h-6 rounded bg-sky-600 text-white flex items-center justify-center font-bold text-xs shadow-2xs">
         ΕΛ
       </div>
-      <div class="flex items-baseline gap-2">
-        <h1 class="font-bold text-sm tracking-tight text-slate-900">
-          Греческий язык — Навигатор уроков
-        </h1>
-        <span class="hidden sm:inline-block text-[11px] font-semibold px-2 py-0.5 rounded-full bg-sky-50 text-sky-700 border border-sky-200">
-          20 уроков • Ключевые слова и фразы
-        </span>
+      <div class="flex items-center gap-1.5">
+        <span class="font-bold text-slate-900 text-xs tracking-tight hidden sm:inline">Навигатор курса</span>
+        <span id="lessonCounter" class="px-1.5 py-0.2 rounded-full text-[10px] bg-sky-50 text-sky-700 font-bold border border-sky-200">20 уроков</span>
+        <a href="lessons/lesson_11.html" class="hidden xl:inline-flex items-center gap-1 px-2 py-0.2 rounded-full text-[10px] bg-emerald-50 text-emerald-700 font-bold border border-emerald-200 hover:bg-emerald-100 transition">
+          <span>★ Урок 11: Квартиры →</span>
+        </a>
       </div>
     </div>
 
-    <div class="flex items-center gap-2.5 no-print">
-      <a
-        href="lessons/lesson_11.html"
-        class="hidden md:flex items-center gap-1.5 text-xs font-semibold text-sky-700 bg-sky-50 hover:bg-sky-100 px-2.5 py-1 rounded border border-sky-200 transition"
-      >
-        <span class="w-2 h-2 rounded-full bg-sky-600"></span>
-        <span>Урок 11: Квартиры (123 слова) →</span>
-      </a>
+    <!-- Compact Search Box -->
+    <div class="flex-1 max-w-xs min-w-[110px]">
+      <div class="relative">
+        <input 
+          type="text" 
+          id="searchInput" 
+          placeholder="Поиск урока или фразы (el / ru)..." 
+          class="w-full pl-6 pr-6 py-0.5 text-xs rounded border border-slate-200 focus:outline-none focus:ring-1 focus:ring-sky-500 bg-slate-50 focus:bg-white text-slate-900 transition"
+        />
+        <svg class="w-3.5 h-3.5 text-slate-400 absolute left-1.5 top-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+        <button id="clearSearchBtn" class="hidden absolute right-1.5 top-0.5 text-slate-400 hover:text-slate-600 text-xs">✕</button>
+      </div>
+    </div>
 
-      <button
-        onclick="window.print()"
-        title="Распечатать список всех 20 уроков на формате А4"
-        class="flex items-center gap-1.5 px-3 py-1 rounded bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-2xs transition cursor-pointer"
+    <!-- Action Toolbar -->
+    <div class="flex items-center gap-1 shrink-0 text-xs">
+      
+      <!-- 100% Fit Toggle (Desktop only) -->
+      <button 
+        id="autoFitBtn"
+        onclick="toggleAutoFit()"
+        title="Автоматически подогнать все 20 уроков под высоту окна без скролла"
+        class="hidden lg:flex px-2 py-0.5 rounded text-[11px] font-semibold border border-sky-300 bg-sky-50 text-sky-700 hover:bg-sky-100 items-center gap-1 shadow-2xs cursor-pointer"
       >
-        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-3 h-3 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+        </svg>
+        <span>В экран</span>
+      </button>
+
+      <!-- Test Mode (Blur translations) -->
+      <button 
+        id="testBtn"
+        onclick="toggleTestMode()"
+        title="Скрыть русский перевод для самопроверки"
+        class="px-2 py-0.5 rounded border border-slate-200 bg-white hover:bg-slate-100 font-medium text-[11px] text-slate-700 flex items-center gap-1 cursor-pointer"
+      >
+        <span id="testIcon">👁️</span>
+        <span class="hidden sm:inline" id="testLabel">Тест</span>
+      </button>
+
+      <!-- Font Resizing (Desktop only) -->
+      <div class="hidden lg:flex items-center border border-slate-200 rounded text-[11px] overflow-hidden bg-white">
+        <button onclick="adjustScale(-0.04)" title="Уменьшить масштаб" class="px-1.5 py-0.5 hover:bg-slate-100 text-slate-700 font-bold border-r border-slate-200 cursor-pointer">A-</button>
+        <button onclick="adjustScale(0.04)" title="Увеличить масштаб" class="px-1.5 py-0.5 hover:bg-slate-100 text-slate-700 font-bold cursor-pointer">A+</button>
+      </div>
+
+      <!-- Speech Speed -->
+      <button 
+        id="speedBtn"
+        onclick="cycleSpeed()"
+        title="Скорость греческой озвучки"
+        class="px-1.5 py-0.5 rounded border border-slate-200 bg-white hover:bg-slate-100 font-bold text-[11px] text-slate-700 cursor-pointer"
+      >
+        <span id="speedValue">0.9x</span>
+      </button>
+
+      <!-- Print A4 -->
+      <button 
+        onclick="printA4()"
+        title="Распечатать шпаргалку 20 уроков на 1 лист A4 (альбомная)"
+        class="flex items-center gap-1 px-2.5 py-0.5 rounded bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-[11px] shadow-2xs transition cursor-pointer"
+      >
+        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
         </svg>
-        <span>Печать А4</span>
+        <span class="hidden sm:inline">Печать А4</span>
       </button>
     </div>
   </header>
 
-  <!-- Main Viewport: 5x4 Grid fitting 100% of remaining viewport height on desktop -->
-  <main id="main-viewport" class="flex-1 p-2.5 overflow-y-auto lg:overflow-hidden flex flex-col">
-    <div id="lessonsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 lg:grid-rows-4 gap-2.5 w-full h-full">
-      <!-- Populated by JS -->
+  <!-- Viewport Stage (100dvh minus header on desktop; scrollable sausage on mobile) -->
+  <main id="viewport-container">
+    <div id="scale-stage">
+      <div id="columnsContainer" class="sheet-columns">
+        <!-- 5 balanced columns rendered dynamically -->
+      </div>
     </div>
   </main>
 
   <script>
+    // Complete 20-lesson database with key words & phrases for repetition (4 lessons per column = 5 columns)
     const LESSONS = [
       {
         num: 1,
-        theme: "Знакомство и приветствие",
-        elTitle: "Γεια σας!",
-        words: ["Γεια σας / Γεια σου", "Πώς σε λένε;", "Είμαι ο/η...", "Από πού είσαι;", "Χάρηκα πολύ", "Καλημέρα / Καλησπέρα"],
-        ready: false
+        title: "1. Знакомство",
+        subtitle: "Γεια σας!",
+        badge: "bg-blue-50 text-blue-700 border-blue-200",
+        colIndex: 0,
+        words: [
+          { el: "Γεια σας / Γεια σου", ru: "Здравствуйте / Привет" },
+          { el: "Πώς σε λένε;", ru: "Как тебя зовут?" },
+          { el: "Με λένε...", ru: "Меня зовут..." },
+          { el: "Από πού είσαι;", ru: "Откуда ты?" },
+          { el: "Καλημέρα / Καλησπέρα", ru: "Доброе утро / вечер" },
+          { el: "Χάρηκα πολύ", ru: "Очень приятно" }
+        ]
       },
       {
         num: 2,
-        theme: "Где ты живёшь? Город и адрес",
-        elTitle: "Πού μένεις;",
-        words: ["Πού μένεις;", "Μένω στην Αθήνα", "η οδός / ο αριθμός", "το κέντρο", "το τηλέφωνο", "κοντά / μακριά"],
-        ready: false
+        title: "2. Город и адрес",
+        subtitle: "Πού μένεις;",
+        badge: "bg-indigo-50 text-indigo-700 border-indigo-200",
+        colIndex: 0,
+        words: [
+          { el: "Πού μένεις;", ru: "Где ты живёшь?" },
+          { el: "Μένω στην Αθήνα", ru: "Я живу в Афинах" },
+          { el: "η οδός / ο αριθμός", ru: "улица / номер" },
+          { el: "το κέντρο", ru: "центр" },
+          { el: "το τηλέφωνο", ru: "телефон" },
+          { el: "κοντά / μακριά", ru: "близко / далеко" }
+        ]
       },
       {
         num: 3,
-        theme: "Профессии, работа и семья",
-        elTitle: "Τι δουλειά κάνεις;",
-        words: ["Τι δουλειά κάνεις;", "Είμαι γιατρός / δάσκαλος", "δουλεύω σε...", "ο άντρας / η γυναίκα", "τα παιδιά", "παντρεμένος / ελεύθερος"],
-        ready: false
+        title: "3. Работа и семья",
+        subtitle: "Τι δουλειά κάνεις;",
+        badge: "bg-cyan-50 text-cyan-700 border-cyan-200",
+        colIndex: 0,
+        words: [
+          { el: "Τι δουλειά κάνεις;", ru: "Кем ты работаешь?" },
+          { el: "δουλεύω σε εταιρεία", ru: "работаю в компании" },
+          { el: "ο γιατρός / ο δάσκαλος", ru: "врач / учитель" },
+          { el: "ο άντρας / η γυναίκα", ru: "муж / жена" },
+          { el: "τα παιδιά", ru: "дети" },
+          { el: "παντρεμένος / ελεύθερος", ru: "женат / свободен" }
+        ]
       },
       {
         num: 4,
-        theme: "Языки и национальности",
-        elTitle: "Μιλάς ελληνικά;",
-        words: ["Μιλάς ελληνικά;", "Μιλάω λίγο", "Δεν καταλαβαίνω", "Πώς το λένε στα ελληνικά;", "Ξέρεις τον/την...;", "η γλώσσα"],
-        ready: false
+        title: "4. Языки и общение",
+        subtitle: "Μιλάς ελληνικά;",
+        badge: "bg-teal-50 text-teal-700 border-teal-200",
+        colIndex: 0,
+        words: [
+          { el: "Μιλάς ελληνικά;", ru: "Говоришь по-гречески?" },
+          { el: "Μιλάω λίγο", ru: "Говорю немного" },
+          { el: "Δεν καταλαβαίνω", ru: "Не понимаю" },
+          { el: "Πώς το λένε;", ru: "Как это называется?" },
+          { el: "Ξέρεις τον / την...;", ru: "Знаешь его / её?" },
+          { el: "η ξένη γλώσσα", ru: "иностранный язык" }
+        ]
       },
       {
         num: 5,
-        theme: "Повторение 1–4: О себе",
-        elTitle: "Πάμε πάλι! (1)",
-        words: ["Χαιρετισμοί", "Προσωπικά στοιχεία", "Εθνικότητες", "Επαγγέλματα", "Αριθμοί 1–100", "Το ρήμα είμαι / μένω"],
-        ready: false
+        title: "5. Повторение 1–4",
+        subtitle: "Πάμε πάλι! (1)",
+        badge: "bg-slate-100 text-slate-700 border-slate-300",
+        colIndex: 1,
+        words: [
+          { el: "τα προσωπικά στοιχεία", ru: "личные данные" },
+          { el: "το όνομα / το επίθετο", ru: "имя / фамилия" },
+          { el: "η εθνικότητα", ru: "национальность" },
+          { el: "το επάγγελμα", ru: "профессия" },
+          { el: "είμαι / μένω / έχω", ru: "быть / жить / иметь" },
+          { el: "οι αριθμοί 1–100", ru: "числа 1–100" }
+        ]
       },
       {
         num: 6,
-        theme: "Транспорт, маршрут и время",
-        elTitle: "Πού πάτε;",
-        words: ["Πού πάτε;", "Πάω με το λεωφορείο", "Τι ώρα είναι;", "Θέλω ένα εισιτήριο", "Πόσο κάνει;", "με τα πόδια / με το μετρό"],
-        ready: false
+        title: "6. Транспорт и время",
+        subtitle: "Πού πάτε;",
+        badge: "bg-amber-50 text-amber-700 border-amber-200",
+        colIndex: 1,
+        words: [
+          { el: "Πού πάτε;", ru: "Куда вы идёте/едете?" },
+          { el: "Πάω με το λεωφορείο", ru: "Еду на автобусе" },
+          { el: "Τι ώρα είναι;", ru: "Который час?" },
+          { el: "Θέλω ένα εισιτήριο", ru: "Хочу один билет" },
+          { el: "Πόσο κάνει;", ru: "Сколько стоит?" },
+          { el: "με τα πόδια / μετρό", ru: "пешком / на метро" }
+        ]
       },
       {
         num: 7,
-        theme: "Дни недели, погода и рутина",
-        elTitle: "Ποτέ την Κυριακή",
-        words: ["Δευτέρα – Κυριακή", "Κάνει ζέστη / κρύο", "Πόσον καιρό είσαι εδώ;", "κάθε μέρα / ποτέ", "ακούω, τρώω, λέω", "Οι μήνες & οι εποχές"],
-        ready: false
+        title: "7. Неделя и погода",
+        subtitle: "Ποτέ την Κυριακή",
+        badge: "bg-purple-50 text-purple-700 border-purple-200",
+        colIndex: 1,
+        words: [
+          { el: "Δευτέρα – Κυριακή", ru: "Понедельник – Воскресенье" },
+          { el: "Κάνει ζέστη / κρύο", ru: "Жарко / холодно" },
+          { el: "Πόσον καιρό είσαι εδώ;", ru: "Как давно ты здесь?" },
+          { el: "κάθε μέρα / ποτέ", ru: "каждый день / никогда" },
+          { el: "ακούω, τρώω, λέω", ru: "слушаю, ем, говорю" },
+          { el: "οι μήνες & οι εποχές", ru: "месяцы и сезоны" }
+        ]
       },
       {
         num: 8,
-        theme: "Кафе, таверна, еда и заказ",
-        elTitle: "Πόσο κάνουν όλα;",
-        words: ["Τι θέλετε, παρακαλώ;", "Θα ήθελα έναν καφέ", "Πόσο κάνουν όλα;", "Τον λογαριασμό", "το ψωμί / το νερό", "σκέτος / μέτριος / γλυκός"],
-        ready: false
+        title: "8. Кафе и заказ",
+        subtitle: "Πόσο κάνουν όλα;",
+        badge: "bg-rose-50 text-rose-700 border-rose-200",
+        colIndex: 1,
+        words: [
+          { el: "Τι θέλετε, παρακαλώ;", ru: "Что желаете?" },
+          { el: "Θα ήθελα έναν καφέ", ru: "Я бы хотел кофе" },
+          { el: "Πόσο κάνουν όλα;", ru: "Сколько за всё?" },
+          { el: "τον λογαριασμό", ru: "счёт (в вин. п.)" },
+          { el: "το ψωμί / το νερό", ru: "хлеб / вода" },
+          { el: "σκέτος / μέτριος / γλυκός", ru: "без сах. / сред. / сладкий" }
+        ]
       },
       {
         num: 9,
-        theme: "Покупки, одежда и цвета",
-        elTitle: "Πάμε για ψώνια;",
-        words: ["Πόσο κοστίζει;", "Μου αρέσει / μου κάνει", "τα ρούχα & τα παπούτσια", "μεγάλο / μικρό νούμερο", "μετρητά ή κάρτα;", "τα χρώματα"],
-        ready: false
+        title: "9. Покупки и одежда",
+        subtitle: "Πάμε για ψώνια;",
+        badge: "bg-emerald-50 text-emerald-700 border-emerald-200",
+        colIndex: 2,
+        words: [
+          { el: "Πόσο κοστίζει;", ru: "Сколько стоит?" },
+          { el: "Μου αρέσει / μου κάνει", ru: "Нравится / подходит" },
+          { el: "τα ρούχα & παπούτσια", ru: "одежда и обувь" },
+          { el: "μεγάλο / μικρό μέγεθος", ru: "большой / мал. размер" },
+          { el: "μετρητά ή με κάρτα;", ru: "наличными или картой?" },
+          { el: "τα χρώματα", ru: "цвета" }
+        ]
       },
       {
         num: 10,
-        theme: "Повторение 6–9: Город и покупки",
-        elTitle: "Πάμε πάλι! (2)",
-        words: ["Ώρα & πρόγραμμα", "Στο καφενείο / εστιατόριο", "Στο κατάστημα", "Αριθμοί 100–1000", "Αιτιατική πτώση", "Καθημερινές φράσεις"],
-        ready: false
+        title: "10. Повторение 6–9",
+        subtitle: "Πάμε πάλι! (2)",
+        badge: "bg-slate-100 text-slate-700 border-slate-300",
+        colIndex: 2,
+        words: [
+          { el: "η ώρα & το πρόγραμμα", ru: "время и расписание" },
+          { el: "στο καφενείο / ταβέρνα", ru: "в кофейне / таверне" },
+          { el: "στο κατάστημα", ru: "в магазине" },
+          { el: "οι αριθμοί 100–1000", ru: "числа 100–1000" },
+          { el: "η αιτιατική πτώση", ru: "винительный падеж" },
+          { el: "καθημερινές αγορές", ru: "повседневные покупки" }
+        ]
       },
       {
         num: 11,
-        theme: "Квартиры, аренда и город",
-        elTitle: "Ψάχνω για σπίτι",
-        words: ["το διαμέρισμα / το σπίτι", "το ενοίκιο & τα κοινόχρηστα", "ο όροφος / το ισόγειο", "το σαλόνι, η κουζίνα, το μπάνιο", "έπιπλα & συσκευές", "δίπλα σε / απέναντι από"],
+        title: "11. Квартиры",
+        subtitle: "Ψάχνω για σπίτι",
+        badge: "bg-sky-600 text-white border-sky-700",
+        colIndex: 2,
+        ready: true,
         url: "lessons/lesson_11.html",
-        ready: true
+        words: [
+          { el: "το διαμέρισμα / το σπίτι", ru: "квартира / дом" },
+          { el: "το ενοίκιο & κοινόχρηστα", ru: "аренда и коммуналка" },
+          { el: "ο όροφος / το ισόγειο", ru: "этаж / 1-й этаж" },
+          { el: "το σαλόνι, η κουζίνα", ru: "гостиная, кухня" },
+          { el: "έπιπλα & συσκευές", ru: "мебель и техника" },
+          { el: "δίπλα σε / απέναντι από", ru: "рядом с / напротив" }
+        ]
       },
       {
         num: 12,
-        theme: "Путешествие и прошедшее время",
-        elTitle: "Ένα ταξίδι",
-        words: ["Πού ήσουν το Σαββατοκύριακο;", "Πώς περάσατε χτες;", "ταξίδεψα / πήγα", "το ξενοδοχείο / το νησί", "το αεροπλάνο / το πλοίο", "χτες, προχτές, πέρυσι"],
-        ready: false
+        title: "12. Путешествие",
+        subtitle: "Ένα ταξίδι",
+        badge: "bg-violet-50 text-violet-700 border-violet-200",
+        colIndex: 2,
+        words: [
+          { el: "Πού ήσουν το Σ/Κ;", ru: "Где ты был на выходных?" },
+          { el: "Πώς περάσατε χτες;", ru: "Как провели время вчера?" },
+          { el: "ταξίδεψα / πήγα", ru: "я путешествовал / поехал" },
+          { el: "το ξενοδοχείο / το νησί", ru: "отель / остров" },
+          { el: "το αεροπλάνο / το πλοίο", ru: "самолёт / корабль" },
+          { el: "χτες, προχτές, πέρυσι", ru: "вчера, позавчера, в пр. году" }
+        ]
       },
       {
         num: 13,
-        theme: "Биография, события и праздники",
-        elTitle: "Η ιστορία της ζωής μου",
-        words: ["Γεννήθηκα στην...", "Μεγάλωσα / σπούδασα", "Ήρθα στην Ελλάδα", "Χρόνια πολλά! Να ζήσεις!", "η γιορτή / τα γενέθλια", "παντρεύτηκα / βρήκα δουλειά"],
-        ready: false
+        title: "13. История жизни",
+        subtitle: "Η ιστορία της ζωής μου",
+        badge: "bg-blue-50 text-blue-700 border-blue-200",
+        colIndex: 3,
+        words: [
+          { el: "Γεννήθηκα στην...", ru: "Я родился(-ась) в..." },
+          { el: "Μεγάλωσα / σπούδασα", ru: "Вырос / учился в вузе" },
+          { el: "Ήρθα στην Ελλάδα", ru: "Я приехал в Грецию" },
+          { el: "Χρόνια πολλά! Να ζήσεις!", ru: "С праздником! Долгих лет!" },
+          { el: "η γιορτή / τα γενέθλια", ru: "именины / день рождения" },
+          { el: "παντρεύτηκα / βρήκα", ru: "женился / нашёл" }
+        ]
       },
       {
         num: 14,
-        theme: "Планы на будущее и меню",
-        elTitle: "Τι θα κάνουμε;",
-        words: ["Τι θα κάνουμε το βράδυ;", "Θα σας πω κάτι", "Τι θα πάρετε / πιούμε;", "τον άλλο μήνα / αύριο", "το ορεκτικό / το κυρίως πιάτο", "Στην ταβέρνα"],
-        ready: false
+        title: "14. Планы и будущее",
+        subtitle: "Τι θα κάνουμε;",
+        badge: "bg-indigo-50 text-indigo-700 border-indigo-200",
+        colIndex: 3,
+        words: [
+          { el: "Τι θα κάνουμε το βράδυ;", ru: "Что будем делать вечером?" },
+          { el: "Θα σας πω κάτι", ru: "Я вам кое-что скажу" },
+          { el: "Τι θα πάρετε / πιούμε;", ru: "Что возьмёте / выпьем?" },
+          { el: "τον άλλο μήνα / αύριο", ru: "в след. месяце / завтра" },
+          { el: "το ορεκτικό / το πιάτο", ru: "закуска / блюдо" },
+          { el: "Στην ταβέρνα", ru: "В таверне" }
+        ]
       },
       {
         num: 15,
-        theme: "Повторение 11–14: Времена глаголов",
-        elTitle: "Πάμε πάλι! (3)",
-        words: ["Αόριστος (прошедшее)", "Μέλλοντας (будущее)", "Περιγραφή σπιτιού", "Αφήγηση γεγονότων", "Σύγκριση (πιο... από)", "Ρήματα Γ2 (θυμάμαι, κοιμάμαι)"],
-        ready: false
+        title: "15. Повторение 11–14",
+        subtitle: "Πάμε πάλι! (3)",
+        badge: "bg-slate-100 text-slate-700 border-slate-300",
+        colIndex: 3,
+        words: [
+          { el: "ο Αόριστος (παρελθόν)", ru: "прошедшее время" },
+          { el: "ο Μέλλοντας (θα + ρήμα)", ru: "будущее время" },
+          { el: "η περιγραφή κατοικίας", ru: "описание жилья" },
+          { el: "πιο μεγάλο από...", ru: "больше чем... (сравн.)" },
+          { el: "θυμάμαι, κοιμάμαι (Γ2)", ru: "помню, сплю (группа Γ2)" },
+          { el: "αφήγηση γεγονότων", ru: "рассказ о событиях" }
+        ]
       },
       {
         num: 16,
-        theme: "Досуг, кино и приглашения",
-        elTitle: "Πάμε βόλτα;",
-        words: ["Πάμε να πιούμε καφέ;", "Θέλετε να δούμε ταινία;", "το σινεμά / το θέατρο", "Αποφάσισα να...", "Μπορώ να έρθω;", "ελεύθερος χρόνος"],
-        ready: false
+        title: "16. Досуг и прогулки",
+        subtitle: "Πάμε βόλτα;",
+        badge: "bg-cyan-50 text-cyan-700 border-cyan-200",
+        colIndex: 3,
+        words: [
+          { el: "Πάμε να πιούμε καφέ;", ru: "Пойдём выпьем кофе?" },
+          { el: "Θέλετε να δούμε ταινία;", ru: "Хотите посмотреть кино?" },
+          { el: "το σινεμά / το θέατρο", ru: "кинотеатр / театр" },
+          { el: "Αποφάσισα να κάνω...", ru: "Я решил сделать..." },
+          { el: "Μπορώ να έρθω μαζί;", ru: "Могу я пойти вместе?" },
+          { el: "ο ελεύθερος χρόνος", ru: "свободное время" }
+        ]
       },
       {
         num: 17,
-        theme: "Поиск работы и резюме",
-        elTitle: "Πάμε για δουλειά",
-        words: ["Τηλεφωνώ για την αγγελία", "Έχετε εμπειρία;", "το βιογραφικό", "ο μισθός & το ωράριο", "πλήρης / μερική απασχόληση", "η συνέντευξη"],
-        ready: false
+        title: "17. Поиск работы",
+        subtitle: "Πάμε για δουλειά",
+        badge: "bg-teal-50 text-teal-700 border-teal-200",
+        colIndex: 4,
+        words: [
+          { el: "Τηλεφωνώ για αγγελία", ru: "Звоню по объявлению" },
+          { el: "Έχετε προϋπηρεσία;", ru: "У вас есть опыт работы?" },
+          { el: "το βιογραφικό σημείωμα", ru: "резюме (CV)" },
+          { el: "ο μισθός & το ωράριο", ru: "зарплата и график" },
+          { el: "πλήρης / μερική", ru: "полная / частичная зан." },
+          { el: "η συνέντευξη", ru: "собеседование" }
+        ]
       },
       {
         num: 18,
-        theme: "У врача, здоровье и аптека",
-        elTitle: "Στον γιατρό",
-        words: ["Τι έχετε; Πονάει ο λαιμός μου", "Έχω πυρετό / βήχα", "Περαστικά!", "το φάρμακο / η συνταγή", "το ραντεβού με τον γιατρό", "τα μέρη του σώματος"],
-        ready: false
+        title: "18. У врача и здоровье",
+        subtitle: "Στον γιατρό",
+        badge: "bg-rose-50 text-rose-700 border-rose-200",
+        colIndex: 4,
+        words: [
+          { el: "Πονάει ο λαιμός μου", ru: "У меня болит горло" },
+          { el: "Έχω πυρετό & βήχα", ru: "У меня жар и кашель" },
+          { el: "Περαστικά!", ru: "Выздоравливай!" },
+          { el: "το φάρμακο / η συνταγή", ru: "лекарство / рецепт" },
+          { el: "το ραντεβού", ru: "приём / встреча" },
+          { el: "το κεφάλι, το στομάχι", ru: "голова, желудок" }
+        ]
       },
       {
         num: 19,
-        theme: "Услуги: почта, банк и очередь",
-        elTitle: "Περιμένετε στην ουρά!",
-        words: ["Περιμένετε στην ουρά, παρακαλώ!", "το ταχυδρομείο / το δέμα", "η τράπεζα / ο λογαριασμός", "υπογράψτε εδώ", "η ταυτότητα / το διαβατήριο", "Προστακτική (повелительное)"],
-        ready: false
+        title: "19. Почта и банк",
+        subtitle: "Περιμένετε στην ουρά!",
+        badge: "bg-amber-50 text-amber-700 border-amber-200",
+        colIndex: 4,
+        words: [
+          { el: "Περιμένετε στην ουρά", ru: "Подождите в очереди" },
+          { el: "το ταχυδρομείο / δέμα", ru: "почта / посылка" },
+          { el: "η τράπεζα / λογαριασμός", ru: "банк / счёт" },
+          { el: "Υπογράψτε εδώ", ru: "Подпишите здесь" },
+          { el: "η ταυτότητα / διαβατήριο", ru: "удостоверение / паспорт" },
+          { el: "η Προστακτική", ru: "повелительное накл." }
+        ]
       },
       {
         num: 20,
-        theme: "Итоговое повторение курса А1",
-        elTitle: "Πάμε πάλι! (4)",
-        words: ["Όλοι οι χρόνοι ρημάτων", "Καθημερινή επικοινωνία", "Σπίτι, πόλη & υπηρεσίες", "Υγεία & εργασία", "Προθέσεις & αντωνυμίες", "Έτοιμοι για το Α2!"],
-        ready: false
+        title: "20. Итог курса А1",
+        subtitle: "Πάμε πάλι! (4)",
+        badge: "bg-emerald-50 text-emerald-700 border-emerald-200",
+        colIndex: 4,
+        words: [
+          { el: "όλοι οι χρόνοι ρημάτων", ru: "все времена глаголов" },
+          { el: "καθημερινή επικοινωνία", ru: "ежедневное общение" },
+          { el: "σπίτι, πόλη & υπηρεσίες", ru: "дом, город и службы" },
+          { el: "υγεία & εργασία", ru: "здоровье и работа" },
+          { el: "προθέσεις & αντωνυμίες", ru: "предлоги и местоимения" },
+          { el: "Έτοιμοι για το Α2!", ru: "Готовы к уровню А2!" }
+        ]
       }
     ];
 
-    const grid = document.getElementById('lessonsGrid');
+    // State Variables
+    let speechRate = 0.9;
+    let manualScaleMultiplier = 1.0;
+    let isAutoFitActive = true;
+    let searchQuery = '';
+    const speedCycle = [0.7, 0.9, 1.0];
 
-    LESSONS.forEach(lesson => {
-      const el = document.createElement(lesson.ready ? 'a' : 'div');
-      if (lesson.ready) {
-        el.href = lesson.url;
+    // Format Greek articles
+    function formatGreek(text) {
+      return text.replace(/^(το|τα|η|οι|ο)\s+/i, (match, art) => {
+        const lower = art.toLowerCase();
+        let cls = 'art-neu';
+        if (lower === 'η' || lower === 'οι') cls = 'art-fem';
+        else if (lower === 'ο') cls = 'art-masc';
+        return `<span class="${cls}">${art}</span> `;
+      });
+    }
+
+    // Text to Speech
+    function speak(text, e) {
+      if (e) e.stopPropagation();
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const clean = text.replace(/\(.*?\)/g, '').replace(/\/.*/, '').trim();
+      const utter = new SpeechSynthesisUtterance(clean);
+      utter.lang = 'el-GR';
+      utter.rate = speechRate;
+      window.speechSynthesis.speak(utter);
+    }
+
+    function cycleSpeed() {
+      const idx = speedCycle.indexOf(speechRate);
+      speechRate = speedCycle[(idx + 1) % speedCycle.length];
+      document.getElementById('speedValue').innerText = speechRate + 'x';
+    }
+
+    function toggleTestMode() {
+      const isTest = document.body.classList.toggle('test-mode');
+      document.getElementById('testIcon').innerText = isTest ? '🙈' : '👁️';
+      document.getElementById('testLabel').innerText = isTest ? 'Ответы' : 'Тест';
+    }
+
+    function toggleAutoFit() {
+      isAutoFitActive = !isAutoFitActive;
+      const btn = document.getElementById('autoFitBtn');
+      if (isAutoFitActive) {
+        btn.className = "hidden lg:flex px-2 py-0.5 rounded text-[11px] font-semibold border border-sky-300 bg-sky-50 text-sky-700 hover:bg-sky-100 items-center gap-1 shadow-2xs cursor-pointer";
+        manualScaleMultiplier = 1.0;
+      } else {
+        btn.className = "hidden lg:flex px-2 py-0.5 rounded text-[11px] font-medium border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 items-center gap-1 cursor-pointer";
+      }
+      fitViewport();
+    }
+
+    function adjustScale(delta) {
+      isAutoFitActive = false;
+      document.getElementById('autoFitBtn').className = "hidden lg:flex px-2 py-0.5 rounded text-[11px] font-medium border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 items-center gap-1 cursor-pointer";
+      manualScaleMultiplier = Math.max(0.65, Math.min(1.35, manualScaleMultiplier + delta));
+      fitViewport();
+    }
+
+    // Auto-fit Engine for Desktop (>=1024px); disabled on mobile (<1024px) where it scrolls as a sausage
+    function fitViewport() {
+      const container = document.getElementById('viewport-container');
+      const stage = document.getElementById('scale-stage');
+      const columnsContainer = document.getElementById('columnsContainer');
+      if (!container || !stage || !columnsContainer) return;
+
+      if (window.innerWidth < 1024) {
+        stage.style.transform = 'none';
+        stage.style.width = '100%';
+        stage.style.height = 'auto';
+        return;
       }
 
-      el.className = `lesson-card group relative flex flex-col justify-between p-2.5 rounded-lg border transition-all ${
-        lesson.ready
-          ? 'bg-white border-2 border-sky-500 shadow-sm hover:shadow-md hover:border-sky-600 hover:bg-sky-50/30 cursor-pointer ring-2 ring-sky-500/10'
-          : 'bg-white border-slate-200 hover:border-slate-300 shadow-2xs'
-      }`;
+      stage.style.transform = 'none';
+      stage.style.width = '100%';
+      stage.style.height = 'auto';
 
-      const badgeHtml = lesson.ready
-        ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-sky-600 text-white shadow-2xs group-hover:bg-sky-700 transition">Открыть шпаргалку →</span>`
-        : `<span class="px-1.5 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-500 border border-slate-200">Урок ${lesson.num}</span>`;
+      const availH = container.clientHeight - 10;
+      const availW = container.clientWidth - 10;
 
-      const wordsListHtml = lesson.words.map(w => `
-        <span class="inline-block text-[10.5px] leading-snug px-1.5 py-0.5 rounded ${
-          lesson.ready
-            ? 'bg-sky-50 text-sky-900 border border-sky-200/80 font-medium'
-            : 'bg-slate-50 text-slate-600 border border-slate-200/60'
-        }">${w}</span>
-      `).join('');
+      if (availH <= 0 || availW <= 0) return;
 
-      el.innerHTML = `
-        <div>
-          <!-- Card Header -->
-          <div class="flex items-center justify-between gap-1.5 mb-1">
-            <div class="flex items-center gap-1.5 min-w-0">
-              <span class="w-5 h-5 rounded flex items-center justify-center font-extrabold text-[11px] shrink-0 ${
-                lesson.ready ? 'bg-sky-600 text-white' : 'bg-slate-200 text-slate-700'
-              }">
-                ${lesson.num}
-              </span>
-              <span class="text-[11px] font-bold text-sky-700 truncate">${lesson.elTitle}</span>
-            </div>
-            ${badgeHtml}
+      if (isAutoFitActive) {
+        const naturalH = columnsContainer.offsetHeight;
+        if (naturalH > availH) {
+          const scale = availH / naturalH;
+          stage.style.width = `${100 / scale}%`;
+          const adjustedH = columnsContainer.offsetHeight;
+          const finalScale = Math.min(1, availH / adjustedH);
+          stage.style.width = `${100 / finalScale}%`;
+          stage.style.transform = `scale(${finalScale})`;
+        } else {
+          stage.style.width = '100%';
+          stage.style.transform = 'scale(1)';
+        }
+      } else {
+        stage.style.width = `${100 / manualScaleMultiplier}%`;
+        stage.style.transform = `scale(${manualScaleMultiplier})`;
+      }
+    }
+
+    // Render 20 lessons across 5 columns (or single vertical sausage on mobile)
+    function render() {
+      const container = document.getElementById('columnsContainer');
+      container.innerHTML = '';
+
+      const cols = [0, 1, 2, 3, 4].map(() => {
+        const div = document.createElement('div');
+        div.className = 'col-stack';
+        return div;
+      });
+
+      let matchedLessons = 0;
+      const q = searchQuery.toLowerCase().trim();
+
+      LESSONS.forEach(lesson => {
+        const titleMatches = lesson.title.toLowerCase().includes(q) || lesson.subtitle.toLowerCase().includes(q);
+        const words = lesson.words.filter(w => {
+          if (!q || titleMatches) return true;
+          return w.el.toLowerCase().includes(q) || w.ru.toLowerCase().includes(q);
+        });
+
+        if (words.length === 0) return;
+        matchedLessons++;
+
+        const card = document.createElement('div');
+        card.className = `vocab-card ${lesson.ready ? 'ready-lesson' : ''}`;
+
+        const header = document.createElement('div');
+        header.className = 'vocab-card-header text-slate-800';
+
+        const actionBtn = lesson.ready
+          ? `<a href="${lesson.url}" class="px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-sky-600 hover:bg-sky-700 text-white shadow-2xs transition shrink-0">Открыть 123 сл. →</a>`
+          : `<span class="text-[9.5px] font-bold px-1 rounded border ${lesson.badge} shrink-0">Ур. ${lesson.num}</span>`;
+
+        header.innerHTML = `
+          <div class="truncate">
+            ${lesson.ready ? `<a href="${lesson.url}" class="text-[11px] font-bold text-sky-700 hover:underline">${lesson.title}</a>` : `<span class="text-[11px] font-bold text-slate-800">${lesson.title}</span>`}
+            <span class="text-[9.5px] text-slate-500 font-normal ml-0.5">(${lesson.subtitle})</span>
           </div>
+          ${actionBtn}
+        `;
+        card.appendChild(header);
 
-          <!-- Russian Theme Title -->
-          <h2 class="font-bold text-xs md:text-[13px] text-slate-900 leading-tight mb-1.5">
-            ${lesson.theme}
-          </h2>
-        </div>
+        const list = document.createElement('div');
+        list.className = 'flex flex-col';
 
-        <!-- Key Words & Phrases for Repetition -->
-        <div class="pt-1.5 border-t border-slate-100 flex flex-wrap gap-1 content-start">
-          ${wordsListHtml}
-        </div>
-      `;
+        words.forEach(w => {
+          const row = document.createElement('div');
+          row.className = 'vocab-row group';
+          row.onclick = (e) => speak(w.el, e);
+          row.title = 'Кликните для озвучки';
 
-      grid.appendChild(el);
+          row.innerHTML = `
+            <div class="flex items-baseline gap-1 min-w-0">
+              <span class="font-semibold text-slate-900 leading-tight">${formatGreek(w.el)}</span>
+              <button class="audio-btn opacity-0 group-hover:opacity-100 text-slate-400 hover:text-sky-600 p-0.5 shrink-0" title="Озвучить">
+                <svg class="w-2.5 h-2.5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path>
+                </svg>
+              </button>
+            </div>
+            <div class="ru-translation text-slate-600 text-right shrink-0 font-normal">
+              ${w.ru}
+            </div>
+          `;
+          list.appendChild(row);
+        });
+
+        card.appendChild(list);
+        cols[lesson.colIndex].appendChild(card);
+      });
+
+      cols.forEach(c => container.appendChild(c));
+      document.getElementById('lessonCounter').innerText = q ? `${matchedLessons} ур.` : `20 уроков`;
+
+      requestAnimationFrame(fitViewport);
+    }
+
+    // Print A4 Function
+    function printA4() {
+      const wasTest = document.body.classList.contains('test-mode');
+      const wasQuery = searchQuery;
+
+      if (wasTest) document.body.classList.remove('test-mode');
+      if (wasQuery) {
+        searchQuery = '';
+        document.getElementById('searchInput').value = '';
+        render();
+      }
+
+      window.print();
+
+      if (wasTest) document.body.classList.add('test-mode');
+      if (wasQuery) {
+        searchQuery = wasQuery;
+        document.getElementById('searchInput').value = wasQuery;
+        render();
+      }
+    }
+
+    // Search events
+    const searchInput = document.getElementById('searchInput');
+    const clearBtn = document.getElementById('clearSearchBtn');
+
+    searchInput.addEventListener('input', (e) => {
+      searchQuery = e.target.value;
+      clearBtn.classList.toggle('hidden', !searchQuery);
+      render();
     });
+
+    clearBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      searchQuery = '';
+      clearBtn.classList.add('hidden');
+      render();
+      searchInput.focus();
+    });
+
+    window.addEventListener('resize', () => {
+      fitViewport();
+    });
+
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+    }
+
+    render();
   </script>
 </body>
 </html>
