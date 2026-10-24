@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Урок 12: Путешествие — Греческий язык</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../assets/cheatsheet.css">
+</head>
+<body>
+  <script>
+    // Достаточно просто добавлять новые секции и слова в массив sections ниже.
+    // Скрипт cheatsheet.js сам распределит их по 5 колонкам на ПК и в вертикальную ленту на телефоне!
+    window.LESSON_DATA = {
+      num: 12,
+      title: "Путешествие",
+      elTitle: "Ένα ταξίδι",
+      backUrl: "../index.html",
+      backLabel: "← Все 20 уроков",
+      sections: [
+        {
+          title: "1. Ключевые слова и фразы",
+          subtitle: "Ένα ταξίδι",
+          words: [
+                    { el: "Πού ήσουν το Σ/Κ;", ru: "Где ты был на выходных?" },
+                    { el: "Πώς περάσατε χτες;", ru: "Как провели время вчера?" },
+                    { el: "ταξίδεψα / πήγα", ru: "я путешествовал / поехал" },
+                    { el: "το ξενοδοχείο / το νησί", ru: "отель / остров" },
+                    { el: "το αεροπλάνο / το πλοίο", ru: "самолёт / корабль" },
+                    { el: "χτες, προχτές, πέρυσι", ru: "вчера, позавчера, в пр. году" }
+          ]
+        }
+      ]
+    };
+  </script>
+  <script src="../assets/cheatsheet.js"></script>
+</body>
+</html>

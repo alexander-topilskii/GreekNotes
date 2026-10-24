@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Урок 20: Итог курса А1 — Греческий язык</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../assets/cheatsheet.css">
+</head>
+<body>
+  <script>
+    // Достаточно просто добавлять новые секции и слова в массив sections ниже.
+    // Скрипт cheatsheet.js сам распределит их по 5 колонкам на ПК и в вертикальную ленту на телефоне!
+    window.LESSON_DATA = {
+      num: 20,
+      title: "Итог курса А1",
+      elTitle: "Πάμε πάλι! (4)",
+      backUrl: "../index.html",
+      backLabel: "← Все 20 уроков",
+      sections: [
+        {
+          title: "1. Ключевые слова и фразы",
+          subtitle: "Πάμε πάλι! (4)",
+          words: [
+                    { el: "όλοι οι χρόνοι ρημάτων", ru: "все времена глаголов" },
+                    { el: "καθημερινή επικοινωνία", ru: "ежедневное общение" },
+                    { el: "σπίτι, πόλη & υπηρεσίες", ru: "дом, город и службы" },
+                    { el: "υγεία & εργασία", ru: "здоровье и работа" },
+                    { el: "προθέσεις & αντωνυμίες", ru: "предлоги и местоимения" },
+                    { el: "Έτοιμοι για το Α2!", ru: "Готовы к уровню А2!" }
+          ]
+        }
+      ]
+    };
+  </script>
+  <script src="../assets/cheatsheet.js"></script>
+</body>
+</html>
